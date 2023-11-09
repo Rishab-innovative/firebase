@@ -105,7 +105,6 @@ const SignupPage: React.FC = () => {
       }
     }
     setInputFieldError({
-      ...inputFieldError,
       firstNameError: fname,
       lastNameError: lname,
       passwordError: passError,
@@ -127,7 +126,8 @@ const SignupPage: React.FC = () => {
     }
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: any) => {
+    e.preventDefault();
     if (
       inputFieldError.firstNameError ||
       inputFieldError.lastNameError ||
@@ -166,7 +166,7 @@ const SignupPage: React.FC = () => {
             type="text"
             size="small"
             helperText={
-              inputFieldError.firstNameError ? "Must contain 5 alphabets" : ""
+              inputFieldError.firstNameError && "Must contain 5 alphabets"
             }
             onChange={handleInputChange}
             onBlur={handleBlur}
@@ -179,7 +179,7 @@ const SignupPage: React.FC = () => {
             type="text"
             size="small"
             helperText={
-              inputFieldError.lastNameError ? "Must contain 5 alphabets" : ""
+              inputFieldError.lastNameError && "Must contain 5 alphabets"
             }
             onChange={handleInputChange}
             onBlur={handleBlur}
@@ -191,9 +191,7 @@ const SignupPage: React.FC = () => {
             id="phoneNumber"
             label="Phone Number"
             helperText={
-              inputFieldError.phoneNumberError
-                ? "Number must have 10 digits"
-                : ""
+              inputFieldError.phoneNumberError && "Number must have 10 digits"
             }
             type="number"
             onChange={handleInputChange}
@@ -206,7 +204,7 @@ const SignupPage: React.FC = () => {
             error={inputFieldError.emailInputError ? true : false}
             size="small"
             helperText={
-              inputFieldError.emailInputError ? "Enter a valid email" : ""
+              inputFieldError.emailInputError && "Enter a valid email"
             }
             onChange={handleInputChange}
             onBlur={handleBlur}

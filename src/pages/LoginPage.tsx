@@ -12,11 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = React.useState(false);
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
 
   const navigate = useNavigate();
   return (
@@ -36,7 +31,6 @@ const LoginPage = () => {
                 <IconButton
                   aria-label="toggle password visibility"
                   onClick={() => setShowPassword((show) => !show)}
-                  onMouseDown={handleMouseDownPassword}
                   edge="end"
                 >
                   {showPassword ? <VisibilityOff /> : <Visibility />}
