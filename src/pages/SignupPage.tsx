@@ -11,15 +11,13 @@ import { styled } from "@mui/material/styles";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
+import { AppDispatchType } from "../redux/Store";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useNavigate } from "react-router-dom";
-import { imageDb } from "../firebase";
-import { ref, uploadBytes } from "firebase/storage";
-import { v4 } from "uuid";
-import { RegistrationFormData } from "../redux/RegisterSlice";
+import { RegistrationFormData, SaveUserData } from "../redux/RegisterSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const VisuallyHiddenInput = styled("input")({
@@ -40,10 +38,11 @@ interface registerDataType {
   phoneNumber: string | number;
   email: string;
   password: string;
-  picture?: File | null;
+  picture: File | null;
   confirmPassword: string;
 }
 const SignupPage: React.FC = () => {
+  const [alreadyUser, setAlreadyUser] = useState(false);
   const [showPassword, setShowPassword] = useState({
     password: false,
     confirmPassword: false,
@@ -114,7 +113,7 @@ const SignupPage: React.FC = () => {
     });
   };
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatchType>();
   const registerStatus = useSelector((state: RootState) => state.registerUser);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!(event.target.value.trim() === "")) {
@@ -125,31 +124,33 @@ const SignupPage: React.FC = () => {
       setResgisterData(updatedRegsterData);
     }
   };
+  const handleRegister = async () => {
+    const errors = inputFieldError;
+    const data = registerData;
 
-  const handleRegister = async (e: any) => {
-    e.preventDefault();
     if (
-      inputFieldError.firstNameError ||
-      inputFieldError.lastNameError ||
-      inputFieldError.phoneNumberError ||
-      inputFieldError.emailInputError ||
-      inputFieldError.passwordError ||
-      inputFieldError.confirmPasswordError
+      Object.values(errors).some(Boolean) ||
+      Object.values(data).some(
+        (value) =>
+          value === null ||
+          value === undefined ||
+          (typeof value === "string" && value.trim().length < 1)
+      )
     ) {
       return;
     }
+
     const registrationAction: any = RegistrationFormData({
       email: registerData.email,
       password: registerData.password,
     });
-
-    if (registerData.picture) {
-      const pictureRef = ref(imageDb, `files/${v4()}`);
-      uploadBytes(pictureRef, registerData.picture).then((value) => {});
-    }
     const response = await dispatch(registrationAction);
-    if (response.payload) {
+
+    if (!response.error) {
+      dispatch(SaveUserData(registerData));
       navigate("/userProfile");
+    } else {
+      setAlreadyUser(true);
     }
   };
 
@@ -327,6 +328,9 @@ const SignupPage: React.FC = () => {
               Register
             </Button>
           )}
+          {alreadyUser ? (
+            <p className="text-red-600">Email already registered</p>
+          ) : null}
 
           <h3 className="underline underline-offset-4">
             Already have an account
