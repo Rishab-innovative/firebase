@@ -1,7 +1,7 @@
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
-import { RootState } from "../redux/Store";
+import { AppDispatchType, RootState } from "../redux/Store";
 import React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
@@ -11,7 +11,6 @@ import { styled } from "@mui/material/styles";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
-import { AppDispatchType } from "../redux/Store";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -91,7 +90,7 @@ const SignupPage: React.FC = () => {
         emailInputError = true;
       }
     } else if (event.target.id === "phoneNumber") {
-      if (registerData.phoneNumber.toString().length < 10) {
+      if (!(registerData.phoneNumber.toString().length === 10)) {
         numError = true;
       }
     } else if (event.target.id === "password") {
@@ -153,7 +152,17 @@ const SignupPage: React.FC = () => {
       setAlreadyUser(true);
     }
   };
-
+  const isFormComplete = () => {
+    return (
+      registerData.fname !== "" &&
+      registerData.lname !== "" &&
+      registerData.phoneNumber !== "" &&
+      registerData.email !== "" &&
+      registerData.password !== "" &&
+      registerData.confirmPassword !== "" &&
+      registerData.picture !== null
+    );
+  };
   return (
     <div className="flex justify-center items-center h-screen ">
       <FormControl sx={{ m: 1, width: "45ch" }} variant="outlined">
@@ -324,7 +333,11 @@ const SignupPage: React.FC = () => {
               <CircularProgress />
             </Box>
           ) : (
-            <Button variant="contained" onClick={handleRegister}>
+            <Button
+              variant="contained"
+              disabled={!isFormComplete()}
+              onClick={handleRegister}
+            >
               Register
             </Button>
           )}
