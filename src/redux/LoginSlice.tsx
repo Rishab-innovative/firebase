@@ -21,7 +21,6 @@ const initialState: loginState = {
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (data: LoginDataType) => {
-    console.log(data.email, data.password);
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -30,7 +29,7 @@ export const loginUser = createAsyncThunk(
       );
       return userCredential.user;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -48,7 +47,6 @@ const loginUserSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(loginUser.rejected, (state) => {
-      console.log("inside reject");
       state.isLoading = false;
       state.isRejected = true;
     });

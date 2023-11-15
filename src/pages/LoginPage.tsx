@@ -20,7 +20,11 @@ interface loginDataType {
   email: string;
   password: string;
 }
+
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatchType>();
+  const loginStatus = useSelector((state: RootState) => state.loginUser);
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState<loginDataType>({
     email: "",
@@ -33,9 +37,6 @@ const LoginPage = () => {
     };
     setLoginData(updatedRegisterData);
   };
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatchType>();
-  const loginStatus = useSelector((state: RootState) => state.loginUser);
 
   const handleLogin = async () => {
     const response = await dispatch(loginUser(loginData));

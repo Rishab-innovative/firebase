@@ -2,18 +2,19 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
-const firebaseConfig = {
-  apiKey: "AIzaSyAVAjO7500o2y3NLTw51PkeNRli8ZInPL8",
-  authDomain: "fir-react-295f0.firebaseapp.com",
-  projectId: "fir-react-295f0",
-  storageBucket: "fir-react-295f0.appspot.com",
-  messagingSenderId: "669539652050",
-  appId: "1:669539652050:web:dfee029e9237ee7127f80b",
-  measurementId: "G-C7457966ET",
-};
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp({
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
+});
+
 const auth = getAuth();
 const imageDb = getStorage(app);
 const db = getFirestore(app);
+
 export { auth, app, imageDb, db };
