@@ -57,21 +57,6 @@ const SignupPage: React.FC = () => {
     picture: null,
     confirmPassword: "",
   });
-  const [inputFieldError, setInputFieldError] = useState({
-    firstNameError: false,
-    lastNameError: false,
-    phoneNumberError: false,
-    emailInputError: false,
-    passwordError: false,
-    confirmPasswordError: false,
-  });
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
-  let fname = false;
-  let lname = false;
-  let emailInputError = false;
-  let passError = false;
-  let confirmPassword = false;
-  let numError = false;
 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatchType>();
@@ -85,46 +70,7 @@ const SignupPage: React.FC = () => {
       setResgisterData(updatedRegsterData);
     }
   };
-  const handleRegister = async () => {
-    const errors = inputFieldError;
-    const data = registerData;
 
-    if (
-      Object.values(errors).some(Boolean) ||
-      Object.values(data).some(
-        (value) =>
-          value === null ||
-          value === undefined ||
-          (typeof value === "string" && value.trim().length < 1)
-      )
-    ) {
-      return;
-    }
-
-    const registrationAction: any = RegistrationFormData({
-      email: registerData.email,
-      password: registerData.password,
-    });
-    const response = await dispatch(registrationAction);
-
-    if (!response.error) {
-      dispatch(SaveUserData(registerData));
-      navigate("/userProfile");
-    } else {
-      setAlreadyUser(true);
-    }
-  };
-  const isFormComplete = () => {
-    return (
-      registerData.fname !== "" &&
-      registerData.lname !== "" &&
-      registerData.phoneNumber !== "" &&
-      registerData.email !== "" &&
-      registerData.password !== "" &&
-      registerData.confirmPassword !== "" &&
-      registerData.picture !== null
-    );
-  };
   const formik = useFormik({
     initialValues: {
       fname: "",
@@ -137,17 +83,13 @@ const SignupPage: React.FC = () => {
     },
     validationSchema: signUpSchema,
     onSubmit: async (values: any) => {
-      console.log(values);
-      console.log("INSIDE FORMIK", registerData);
       const registrationAction: any = RegistrationFormData({
         email: values.email,
         password: values.password,
       });
       const response = await dispatch(registrationAction);
-      console.log("--response>>", response);
 
       if (!response.error) {
-        console.log("VALUE INSIDE-->", values);
         dispatch(SaveUserData(registerData));
 
         navigate("/userProfile");
@@ -156,7 +98,6 @@ const SignupPage: React.FC = () => {
       }
     },
   });
-  console.log(registerData);
   return (
     <div className="flex justify-center items-center h-screen ">
       <form onSubmit={formik.handleSubmit}>
@@ -350,6 +291,11 @@ const SignupPage: React.FC = () => {
                 }}
               />
             </Button>
+            {registerData.picture ? (
+              <p className="text-green-500">
+                Proifle picture uploaded successfully
+              </p>
+            ) : null}
             {registerStatus.isLoading === true ? (
               <Box sx={{ display: "flex", justifyContent: "center" }}>
                 <CircularProgress />
@@ -357,7 +303,7 @@ const SignupPage: React.FC = () => {
             ) : (
               <Button
                 variant="contained"
-                disabled={!formik.isValid}
+                disabled={!formik.isValid || !registerData.picture}
                 type="submit"
               >
                 Register
