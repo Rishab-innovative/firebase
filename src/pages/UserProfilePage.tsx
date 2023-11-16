@@ -1,17 +1,13 @@
 import React from "react";
-import Button from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const UserProfilePage: React.FC = () => {
-  const navigate = useNavigate();
   return (
     <>
+      <Navbar />
       <div className="text-center text-orange-700">
         THis is user profile page
       </div>
-      <Button variant="contained" onClick={() => navigate("/")}>
-        LOGOUT
-      </Button>
     </>
   );
 };

@@ -17,6 +17,8 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useNavigate } from "react-router-dom";
 import signUpSchema from "../schema";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
 import { useFormik } from "formik";
 import { RegistrationFormData, SaveUserData } from "../redux/RegisterSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,6 +34,17 @@ const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 interface registerDataType {
   fname: string;
@@ -44,6 +57,8 @@ interface registerDataType {
 }
 const SignupPage: React.FC = () => {
   const [alreadyUser, setAlreadyUser] = useState(false);
+  const [openCloseModal, setOpenCloseModal] = React.useState(false);
+
   const [showPassword, setShowPassword] = useState({
     password: false,
     confirmPassword: false,
@@ -88,19 +103,28 @@ const SignupPage: React.FC = () => {
         password: values.password,
       });
       const response = await dispatch(registrationAction);
-
-      if (!response.error) {
-        dispatch(SaveUserData(registerData));
-
-        navigate("/userProfile");
-      } else {
-        setAlreadyUser(true);
+      console.log("register--->", registerStatus.isSuccess);
+      {
+        !response.error
+          ? dispatch(SaveUserData(registerData))
+          : setAlreadyUser(true);
       }
     },
   });
+  console.log("in comp>", registerStatus.isSuccess);
   return (
     <div className="flex justify-center items-center h-screen ">
       <form onSubmit={formik.handleSubmit}>
+        {registerStatus.isSuccess === true ? (
+          <Modal open={openCloseModal} onClose={() => setOpenCloseModal(false)}>
+            <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                SignUp successfully
+              </Typography>
+              <Button onClick={() => navigate("/userProfile")}>OK</Button>
+            </Box>
+          </Modal>
+        ) : null}
         <FormControl sx={{ m: 1, width: "45ch" }} variant="outlined">
           <div className="flex flex-col gap-y-4 border-solid border-2 border-black-500 p-8 rounded-lg text-center">
             <p className="text-3xl text-indigo-600">Registration Form</p>
