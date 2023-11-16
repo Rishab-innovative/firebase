@@ -5,7 +5,7 @@ import { AppDispatchType, RootState } from "../redux/Store";
 import React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { useState, FocusEvent } from "react";
+import { useState } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import { styled } from "@mui/material/styles";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -107,7 +107,6 @@ const SignupPage: React.FC = () => {
         password: values.password,
       });
       const response = await dispatch(registrationAction);
-      console.log("register--->", registerStatus.isSuccess);
       {
         !response.error
           ? dispatch(SaveUserData(registerData))
@@ -119,7 +118,6 @@ const SignupPage: React.FC = () => {
     navigate("/userProfile");
     dispatch(resetSuccess());
   };
-  console.log(registerStatus.isSuccess);
 
   return (
     <div className="flex justify-center items-center h-screen ">

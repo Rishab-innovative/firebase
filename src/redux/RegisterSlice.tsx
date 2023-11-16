@@ -24,6 +24,7 @@ export type registerState = {
   uid: string;
   isSuccess: boolean;
 };
+
 const initialState: registerState = {
   isLoading: false,
   isSuccess: false,
@@ -65,11 +66,10 @@ export const SaveUserData = createAsyncThunk(
       profilePhotoPath: downloadURL,
     };
     try {
-      const storedata = await addDoc(collection(db, "userDetails"), userData);
-    } catch (e) {}
-    // if (storedata) {
-    //   state.userDetails = userData;
-    // }
+      await addDoc(collection(db, "userDetails"), userData);
+    } catch (error) {
+      console.log("Unable to process", error);
+    }
   }
 );
 
