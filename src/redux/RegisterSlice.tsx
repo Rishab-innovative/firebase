@@ -76,7 +76,11 @@ export const SaveUserData = createAsyncThunk(
 const RegisterUserSlice = createSlice({
   name: "SignUpData",
   initialState,
-  reducers: {},
+  reducers: {
+    resetSuccess: (state) => {
+      state.isSuccess = false;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(RegistrationFormData.fulfilled, (state, action) => {
       state.isLoading = false;
@@ -91,4 +95,5 @@ const RegisterUserSlice = createSlice({
     });
   },
 });
+export const { resetSuccess } = RegisterUserSlice.actions;
 export default RegisterUserSlice.reducer;
