@@ -12,6 +12,9 @@ import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
+import TwitterIcon from '@mui/icons-material/Twitter';
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookRoundedIcon from '@mui/icons-material/FacebookRounded';
 import { loginUser } from "../redux/LoginSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatchType, RootState } from "../redux/Store";
@@ -98,11 +101,18 @@ const LoginPage = () => {
           className="underline underline-offset-4 text-indigo-600 cursor-pointer"
           onClick={() => navigate("/signup")}
         >
+          
           SIGNUP HERE
         </h3>
+        <div className="flex gap-x-4 justify-evenly">
+        <FacebookRoundedIcon fontSize="large" className="cursor-pointer" sx={{color:"#0A66FE"}}/>
+        <TwitterIcon fontSize="large" className="cursor-pointer" sx={{color:"#369BF0"}}/>
+        <GoogleIcon fontSize="large" className="cursor-pointer" sx={{color:"red"}}/>
+        </div>
+        
+        
       </div>
     </div>
   );
 };
-
 export default LoginPage;
