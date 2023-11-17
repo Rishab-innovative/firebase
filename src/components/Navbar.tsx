@@ -54,7 +54,6 @@ const Navbar: React.FC = () => {
       }
     });
   }, []);
-  useEffect(() => {}, []);
 
   const handleLogout = () => {
     try {

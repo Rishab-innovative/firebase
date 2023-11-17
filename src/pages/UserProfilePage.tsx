@@ -6,7 +6,7 @@ const UserProfilePage: React.FC = () => {
     <>
       <Navbar />
       <div className="text-center text-orange-700">
-        THis is user profile page
+        This is user profile page
       </div>
     </>
   );

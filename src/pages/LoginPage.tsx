@@ -44,6 +44,7 @@ const LoginPage = () => {
       navigate("/userProfile");
     }
   };
+  const isLoginButtonDisabled = !loginData.email || !loginData.password;
   return (
     <div className="flex justify-center items-center h-screen ">
       <div className="flex flex-col gap-y-4 border-solid border-2 border-black-500 p-8 rounded-lg text-center">
@@ -81,12 +82,16 @@ const LoginPage = () => {
             <CircularProgress />
           </Box>
         ) : (
-          <Button variant="contained" onClick={handleLogin}>
+          <Button
+            variant="contained"
+            onClick={handleLogin}
+            disabled={isLoginButtonDisabled}
+          >
             Log In
           </Button>
         )}
         {loginStatus.isRejected === true ? (
-          <p className="text-red-600">User Not Found</p>
+          <p className="text-red-600">Enter Valid Credential</p>
         ) : null}
         <h3 className="">Not a member?</h3>
         <h3
