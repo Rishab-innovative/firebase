@@ -13,13 +13,16 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { fetchUserDetails } from "../redux/NavBarSlice";
+import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatchType, RootState } from "../redux/Store";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
 const Navbar: React.FC = () => {
-  const userUid = useSelector((state: RootState) => state.registerUser.uid);
   const userData = useSelector((state: RootState) => state.navbarData);
+  const [logInStatus, setLogInStatus] = useState(false);
 
   const dispatch = useDispatch<AppDispatchType>();
   const navigate = useNavigate();
@@ -42,13 +45,29 @@ const Navbar: React.FC = () => {
     setAnchorElUser(null);
   };
   useEffect(() => {
-    console.log(userUid);
-    dispatch(fetchUserDetails(userUid));
-    console.log(userData.userDetails);
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setLogInStatus(true);
+        dispatch(fetchUserDetails(user.uid));
+      } else {
+        setLogInStatus(false);
+      }
+    });
   }, []);
+  useEffect(() => {}, []);
+
+  const handleLogout = () => {
+    try {
+      signOut(auth).then(() => {
+        navigate("/");
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
-      {userData.status === "succeeded" ? (
+      {userData.status === "succeeded" && userData.userDetails ? (
         <AppBar position="static">
           <Container maxWidth="xl">
             <Toolbar disableGutters>
@@ -104,21 +123,25 @@ const Navbar: React.FC = () => {
               </Box>
 
               <Box sx={{ flexGrow: 0 }}>
-                <Typography variant="h6" component="h6">
-                  {userData.userDetails && userData.userDetails?.firstName}{" "}
-                  {userData.userDetails && userData.userDetails.lastName}
-                </Typography>
-                <Typography>
-                  {userData.userDetails && userData.userDetails.email}
-                </Typography>
-                <Tooltip title="click to Logout">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar
-                      alt="Remy Sharp"
-                      src="/static/images/avatar/2.jpg"
-                    />
-                  </IconButton>
-                </Tooltip>
+                <div className="flex gap-x-4">
+                  <div>
+                    <Typography variant="h6" component="h6">
+                      {userData.userDetails && userData.userDetails?.firstName}{" "}
+                      {userData.userDetails && userData.userDetails.lastName}
+                    </Typography>
+                    <Typography>
+                      {userData.userDetails && userData.userDetails.email}
+                    </Typography>
+                  </div>
+                  <Tooltip title="click to Logout">
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      <Avatar
+                        alt="Remy Sharp"
+                        src={userData.userDetails?.profilePhotoPath}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                </div>
                 <Menu
                   sx={{ mt: "45px" }}
                   id="menu-appbar"
@@ -136,10 +159,7 @@ const Navbar: React.FC = () => {
                   onClose={handleCloseUserMenu}
                 >
                   <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      textAlign="center"
-                      onClick={() => navigate("/")}
-                    >
+                    <Typography textAlign="center" onClick={handleLogout}>
                       Logout
                     </Typography>
                   </MenuItem>

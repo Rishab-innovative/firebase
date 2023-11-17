@@ -121,7 +121,8 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="flex justify-center items-center h-screen ">
-      {registerStatus.isSuccess === true ? (
+      {registerStatus.isSuccess === true &&
+      registerStatus.saveUserDataFulfil === true ? (
         <Modal open={openCloseModal} onClose={() => setOpenCloseModal(false)}>
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -329,7 +330,8 @@ const SignupPage: React.FC = () => {
                 Proifle picture uploaded successfully
               </p>
             ) : null}
-            {registerStatus.isLoading === true ? (
+            {registerStatus.isLoading === true ||
+            registerStatus.saveUserDataLoading === true ? (
               <Box sx={{ display: "flex", justifyContent: "center" }}>
                 <CircularProgress />
               </Box>

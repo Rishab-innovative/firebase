@@ -2,16 +2,25 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 
-const initialState = {
+interface NavBarState {
+  userDetails: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    profilePhotoPath: string;
+  } | null;
+  status: string;
+  logInStatus: boolean;
+}
+
+const initialState: NavBarState = {
   userDetails: null,
   status: "idle",
-  error: null,
+  logInStatus: false,
 };
-
 export const fetchUserDetails = createAsyncThunk(
   "fetchUserDetails",
   async (uid: string) => {
-    console.log("uid->", uid);
     try {
       const userDoc = await getDocs(collection(db, "userDetails"));
       let userDetails = null;
@@ -21,7 +30,6 @@ export const fetchUserDetails = createAsyncThunk(
           userDetails = data;
         }
       });
-      console.log("userDetataiil", userDetails);
       return userDetails;
     } catch (error) {
       console.error("Error fetching user details:", error);
@@ -37,18 +45,16 @@ const navBarSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserDetails.pending, (state) => {
-        console.log("loadingngg");
         state.status = "loading";
       })
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
-        console.log("action NAVBAR", action);
-        state.status = "succeeded";
         state.userDetails = action.payload;
+        state.status = "succeeded";
       })
       .addCase(fetchUserDetails.rejected, (state) => {
-        console.log("failedd");
         state.status = "failed";
       });
   },
 });
+
 export default navBarSlice.reducer;
