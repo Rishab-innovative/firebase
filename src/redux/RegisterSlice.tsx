@@ -23,11 +23,16 @@ export type registerState = {
   isLoading: boolean;
   uid: string;
   isSuccess: boolean;
+  saveUserDataFulfil: boolean;
+  saveUserDataLoading: boolean;
 };
+
 const initialState: registerState = {
   isLoading: false,
   isSuccess: false,
   uid: "",
+  saveUserDataFulfil: false,
+  saveUserDataLoading: false,
 };
 export const RegistrationFormData = createAsyncThunk(
   "registerUser",
@@ -44,6 +49,7 @@ export const RegistrationFormData = createAsyncThunk(
     }
   }
 );
+
 export const SaveUserData = createAsyncThunk(
   "SaveUserData",
   async (data: SaveUserDataType, { getState }) => {
@@ -65,11 +71,10 @@ export const SaveUserData = createAsyncThunk(
       profilePhotoPath: downloadURL,
     };
     try {
-      const storedata = await addDoc(collection(db, "userDetails"), userData);
-    } catch (e) {}
-    // if (storedata) {
-    //   state.userDetails = userData;
-    // }
+      await addDoc(collection(db, "userDetails"), userData);
+    } catch (error) {
+      console.log("Unable to process", error);
+    }
   }
 );
 
@@ -92,6 +97,13 @@ const RegisterUserSlice = createSlice({
     });
     builder.addCase(RegistrationFormData.rejected, (state) => {
       state.isLoading = false;
+    });
+    builder.addCase(SaveUserData.fulfilled, (state) => {
+      state.saveUserDataFulfil = true;
+      state.saveUserDataLoading = false;
+    });
+    builder.addCase(SaveUserData.pending, (state) => {
+      state.saveUserDataLoading = true;
     });
   },
 });
