@@ -62,16 +62,16 @@ const LoginPage = () => {
   const isLoginButtonDisabled = !loginData.email || !loginData.password;
 
   const handleFacebookLogin = async () => {
-    await NewAuthAccount(facebookProvider);
+    await newAuthAccount(facebookProvider);
   };
   const handleTwitterLogin = async () => {
-    await NewAuthAccount(twitterProvider);
+    await newAuthAccount(twitterProvider);
   };
   const handleGoogleLogin = async () => {
-    await NewAuthAccount(googleProvider);
+    await newAuthAccount(googleProvider);
   };
 
-  const NewAuthAccount = async (
+  const newAuthAccount = async (
     authProvider:
       | GoogleAuthProvider
       | FacebookAuthProvider
