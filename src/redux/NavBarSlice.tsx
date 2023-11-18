@@ -11,12 +11,14 @@ interface NavBarState {
   } | null;
   status: string;
   logInStatus: boolean;
+  userUid: string | null;
 }
 
 const initialState: NavBarState = {
   userDetails: null,
   status: "idle",
   logInStatus: false,
+  userUid: "",
 };
 export const fetchUserDetails = createAsyncThunk(
   "fetchUserDetails",
@@ -50,6 +52,8 @@ const navBarSlice = createSlice({
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
         state.userDetails = action.payload;
         state.status = "succeeded";
+        console.log("action-->", action.payload);
+        state.userUid = action.payload;
       })
       .addCase(fetchUserDetails.rejected, (state) => {
         state.status = "failed";

@@ -63,6 +63,9 @@ const Navbar: React.FC = () => {
       console.log(error);
     }
   };
+  const handleEditDetails = () => {
+    navigate("/editDetail");
+  };
   return (
     <>
       {userData.status === "succeeded" && userData.userDetails ? (
@@ -102,7 +105,9 @@ const Navbar: React.FC = () => {
                     <Typography textAlign="center">New Post</Typography>
                   </MenuItem>
                   <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">Edit Post</Typography>
+                    <Typography onClick={handleEditDetails} textAlign="center">
+                      Edit Details
+                    </Typography>
                   </MenuItem>
                 </Menu>
               </Box>
@@ -115,7 +120,9 @@ const Navbar: React.FC = () => {
                     <Typography textAlign="center">New Post</Typography>
                   </MenuItem>
                   <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">Edit Post</Typography>
+                    <Typography onClick={handleEditDetails} textAlign="center">
+                      Edit Details
+                    </Typography>
                   </MenuItem>
                 </Button>
               </Box>
