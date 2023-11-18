@@ -13,7 +13,7 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { fetchUserDetails } from "../redux/NavBarSlice";
-import { onAuthStateChanged , signOut} from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatchType, RootState } from "../redux/Store";

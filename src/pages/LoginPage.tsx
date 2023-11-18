@@ -12,22 +12,34 @@ import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
-import TwitterIcon from '@mui/icons-material/Twitter';
-import GoogleIcon from '@mui/icons-material/Google';
-import FacebookRoundedIcon from '@mui/icons-material/FacebookRounded';
+import TwitterIcon from "@mui/icons-material/Twitter";
+import GoogleIcon from "@mui/icons-material/Google";
+import FacebookRoundedIcon from "@mui/icons-material/FacebookRounded";
 import { loginUser } from "../redux/LoginSlice";
+import { SaveAuthUserData } from "../redux/RegisterSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatchType, RootState } from "../redux/Store";
-
+import {
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  TwitterAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth } from "../firebase";
 interface loginDataType {
   email: string;
   password: string;
 }
 
 const LoginPage = () => {
+  const googleProvider = new GoogleAuthProvider();
+  const facebookProvider = new FacebookAuthProvider();
+  const twitterProvider = new TwitterAuthProvider();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatchType>();
   const loginStatus = useSelector((state: RootState) => state.loginUser);
+  const SignInStatus = useSelector((state: RootState) => state.registerUser);
+
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState<loginDataType>({
     email: "",
@@ -48,6 +60,47 @@ const LoginPage = () => {
     }
   };
   const isLoginButtonDisabled = !loginData.email || !loginData.password;
+
+  const handleFacebookLogin = async () => {
+    await NewAuthAccount(facebookProvider);
+  };
+  const handleTwitterLogin = async () => {
+    await NewAuthAccount(twitterProvider);
+  };
+  const handleGoogleLogin = async () => {
+    await NewAuthAccount(googleProvider);
+  };
+
+  const NewAuthAccount = async (
+    authProvider:
+      | GoogleAuthProvider
+      | FacebookAuthProvider
+      | TwitterAuthProvider
+  ) => {
+    try {
+      const response = await signInWithPopup(auth, authProvider);
+      const user = response.user;
+      if (user) {
+        const displayName = user.displayName || "";
+        await dispatch(
+          SaveAuthUserData({
+            uid: user.uid,
+            fname: displayName.split(" ")[0],
+            lname: displayName.split(" ")[1] || "",
+            email: user.email ? user.email : "",
+            pictureURL: user.photoURL,
+            phoneNumber: user.phoneNumber ? user.phoneNumber : "",
+          })
+        );
+      }
+      if (response.user.uid) {
+        navigate("/userProfile");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center h-screen ">
       <div className="flex flex-col gap-y-4 border-solid border-2 border-black-500 p-8 rounded-lg text-center">
@@ -101,16 +154,28 @@ const LoginPage = () => {
           className="underline underline-offset-4 text-indigo-600 cursor-pointer"
           onClick={() => navigate("/signup")}
         >
-          
           SIGNUP HERE
         </h3>
         <div className="flex gap-x-4 justify-evenly">
-        <FacebookRoundedIcon fontSize="large" className="cursor-pointer" sx={{color:"#0A66FE"}}/>
-        <TwitterIcon fontSize="large" className="cursor-pointer" sx={{color:"#369BF0"}}/>
-        <GoogleIcon fontSize="large" className="cursor-pointer" sx={{color:"red"}}/>
+          <FacebookRoundedIcon
+            fontSize="large"
+            className="cursor-pointer"
+            sx={{ color: "#0A66FE" }}
+            onClick={handleFacebookLogin}
+          />
+          <TwitterIcon
+            fontSize="large"
+            className="cursor-pointer"
+            sx={{ color: "#369BF0" }}
+            onClick={handleTwitterLogin}
+          />
+          <GoogleIcon
+            fontSize="large"
+            className="cursor-pointer"
+            sx={{ color: "red" }}
+            onClick={handleGoogleLogin}
+          />
         </div>
-        
-        
       </div>
     </div>
   );

@@ -15,9 +15,9 @@ interface SaveUserDataType {
   lname: string;
   phoneNumber: string | number;
   email: string;
-  password: string;
-  picture: File | null;
-  confirmPassword: string;
+  picture?: File | null;
+  pictureURL?: string | null;
+  uid?: string;
 }
 export type registerState = {
   isLoading: boolean;
@@ -46,6 +46,25 @@ export const RegistrationFormData = createAsyncThunk(
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+export const SaveAuthUserData = createAsyncThunk(
+  "SaveAuthUserData",
+  async (data: SaveUserDataType) => {
+    const pictureRef = ref(imageDb, `files/${data.uid}/profilePicture`);
+    const userData = {
+      uid: data.uid,
+      firstName: data.fname,
+      lastName: data.lname,
+      mobileNumber: data.phoneNumber || "",
+      email: data.email,
+      profilePhotoPath: data.pictureURL,
+    };
+    try {
+      await addDoc(collection(db, "userDetails"), userData);
+    } catch (error) {
+      console.log("Unable to process", error);
     }
   }
 );
@@ -104,6 +123,9 @@ const RegisterUserSlice = createSlice({
     });
     builder.addCase(SaveUserData.pending, (state) => {
       state.saveUserDataLoading = true;
+    });
+    builder.addCase(SaveAuthUserData.fulfilled, (state) => {
+      state.saveUserDataFulfil = true;
     });
   },
 });
