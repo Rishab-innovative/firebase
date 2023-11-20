@@ -29,7 +29,7 @@ export const fetchUserDetails = createAsyncThunk(
       userDoc.forEach((doc: any) => {
         const data = doc.data();
         if (data.uid === uid) {
-          userDetails = data;
+          userDetails = {...data, id: doc.id};
         }
       });
       return userDetails;
@@ -53,7 +53,7 @@ const navBarSlice = createSlice({
         state.userDetails = action.payload;
         state.status = "succeeded";
         console.log("action-->", action.payload);
-        state.userUid = action.payload;
+        state.userUid = (action.payload as unknown as {uid: string}).uid;
       })
       .addCase(fetchUserDetails.rejected, (state) => {
         state.status = "failed";
@@ -62,3 +62,4 @@ const navBarSlice = createSlice({
 });
 
 export default navBarSlice.reducer;
+  

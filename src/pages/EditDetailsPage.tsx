@@ -1,21 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import Input from "@mui/material/Input";
-import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatchType, RootState } from "../redux/Store";
+import { db } from "../firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 const EditDetailsPage: React.FC = () => {
-  const userUid = useSelector((state: RootState) => state.navbarData);
-  const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const updatedRegisterData = {
       ...loginData,
@@ -23,6 +19,17 @@ const EditDetailsPage: React.FC = () => {
     };
     setLoginData(updatedRegisterData);
   };
+
+  useEffect(() => {
+    const docId = "e7el1PtNeZqwK0yQJaBG";
+    const update = async () => {
+      return await updateDoc(doc(db, "userDetails", docId), {
+      lastName: "test1"
+    })
+    };
+    update().then((res) => console.log('res', res));
+  }, []);
+
   return (
     <div className="flex justify-center items-center h-screen ">
       <div className="flex flex-col gap-y-4 border-solid border-2 border-black-500 p-8 rounded-lg text-center">
@@ -39,7 +46,6 @@ const EditDetailsPage: React.FC = () => {
           label="Last Name"
           size="small"
         />
-
         <TextField
           id="phoneNumber"
           onChange={handleInputChange}
