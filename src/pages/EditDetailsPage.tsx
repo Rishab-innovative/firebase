@@ -54,15 +54,27 @@ const EditDetailsPage: React.FC = () => {
   });
 
   const [openCloseModal, setOpenCloseModal] = useState(true);
+  const [error, setError] = useState(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const updatedRegisterData = {
       ...updatedData,
       [event.target.id]: event.target.value,
     };
+    console.log(event.target.value);
+    if (event.target.value === "") {
+      setError(true);
+    } else {
+      // setUpdatedData(updatedRegisterData);
+      setError(false);
+    }
     setUpdatedData(updatedRegisterData);
   };
-
+  const handleBlur = (event: any) => {
+    if (event.target.value === "") {
+      setError(true);
+    }
+  };
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       user && dispatch(fetchUserDetails(user.uid));
@@ -92,7 +104,7 @@ const EditDetailsPage: React.FC = () => {
   }, [LoggedInUserData.status]);
 
   const submitUpdatedData = async () => {
-    if (LoggedInUserData.userDetails && updatedData.picture) {
+    if (LoggedInUserData.userDetails && updatedData.picture && !error) {
       dispatch(
         SaveEditedUserData({
           DocId: LoggedInUserData.userDetails.DocId,
@@ -108,6 +120,8 @@ const EditDetailsPage: React.FC = () => {
           picture: updatedData.picture,
         })
       );
+    } else {
+      setError(true);
     }
   };
   const handleSuccessSignUp = () => {
@@ -148,6 +162,7 @@ const EditDetailsPage: React.FC = () => {
               onChange={handleInputChange}
               label="First Name"
               size="small"
+              onBlur={handleBlur}
             />
             <TextField
               id="lname"
@@ -155,6 +170,7 @@ const EditDetailsPage: React.FC = () => {
               onChange={handleInputChange}
               label="Last Name"
               size="small"
+              onBlur={handleBlur}
             />
             <TextField
               id="mobileNumber"
@@ -162,6 +178,7 @@ const EditDetailsPage: React.FC = () => {
               onChange={handleInputChange}
               label="mobile Number"
               size="small"
+              onBlur={handleBlur}
             />
             <Input
               id="image"
@@ -176,6 +193,9 @@ const EditDetailsPage: React.FC = () => {
               }}
               inputProps={{ accept: "image/*" }}
             />
+            {error ? (
+              <p className="text-red-500">Please Fill all input fields</p>
+            ) : null}
             {updateDetailStatus.status === "loading" ? (
               <Box sx={{ display: "flex", justifyContent: "center" }}>
                 <CircularProgress />

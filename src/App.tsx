@@ -4,10 +4,12 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import EditDetailsPage from "./pages/EditDetailsPage";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/" element={<LoginPage />}></Route>
