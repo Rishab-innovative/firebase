@@ -52,7 +52,6 @@ export const RegistrationFormData = createAsyncThunk(
 export const SaveAuthUserData = createAsyncThunk(
   "SaveAuthUserData",
   async (data: SaveUserDataType) => {
-    const pictureRef = ref(imageDb, `files/${data.uid}/profilePicture`);
     const userData = {
       uid: data.uid,
       firstName: data.fname,

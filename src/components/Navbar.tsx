@@ -11,6 +11,7 @@ import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
+import CircularProgress from "@mui/material/CircularProgress";
 import MenuItem from "@mui/material/MenuItem";
 import { fetchUserDetails } from "../redux/NavBarSlice";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -34,14 +35,6 @@ const Navbar: React.FC = () => {
   };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
   };
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
@@ -96,15 +89,15 @@ const Navbar: React.FC = () => {
                     horizontal: "left",
                   }}
                   open={Boolean(anchorElNav)}
-                  onClose={handleCloseNavMenu}
+                  onClose={() => setAnchorElNav(null)}
                   sx={{
                     display: { xs: "block", md: "none" },
                   }}
                 >
-                  <MenuItem onClick={handleCloseNavMenu}>
+                  <MenuItem onClick={() => setAnchorElNav(null)}>
                     <Typography textAlign="center">New Post</Typography>
                   </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
+                  <MenuItem onClick={() => setAnchorElNav(null)}>
                     <Typography onClick={handleEditDetails} textAlign="center">
                       Edit Details
                     </Typography>
@@ -113,13 +106,13 @@ const Navbar: React.FC = () => {
               </Box>
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
                 <Button
-                  onClick={handleCloseNavMenu}
+                  onClick={() => setAnchorElNav(null)}
                   sx={{ my: 2, color: "white", display: "flex" }}
                 >
-                  <MenuItem onClick={handleCloseNavMenu}>
+                  <MenuItem onClick={() => setAnchorElNav(null)}>
                     <Typography textAlign="center">New Post</Typography>
                   </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
+                  <MenuItem onClick={() => setAnchorElNav(null)}>
                     <Typography onClick={handleEditDetails} textAlign="center">
                       Edit Details
                     </Typography>
@@ -161,9 +154,9 @@ const Navbar: React.FC = () => {
                     horizontal: "right",
                   }}
                   open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
+                  onClose={() => setAnchorElUser(null)}
                 >
-                  <MenuItem onClick={handleCloseUserMenu}>
+                  <MenuItem onClick={() => setAnchorElUser(null)}>
                     <Typography textAlign="center" onClick={handleLogout}>
                       Logout
                     </Typography>
@@ -173,7 +166,16 @@ const Navbar: React.FC = () => {
             </Toolbar>
           </Container>
         </AppBar>
-      ) : null}
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
     </>
   );
 };

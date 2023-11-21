@@ -61,7 +61,7 @@ interface registerDataType {
 }
 const SignupPage: React.FC = () => {
   const [alreadyUser, setAlreadyUser] = useState(false);
-  const [openCloseModal, setOpenCloseModal] = React.useState(true);
+  const [openCloseModal, setOpenCloseModal] = useState(true);
 
   const [showPassword, setShowPassword] = useState({
     password: false,
@@ -128,7 +128,11 @@ const SignupPage: React.FC = () => {
             <Typography id="modal-modal-title" variant="h6" component="h2">
               SignUp successfully
             </Typography>
-            <Button variant="contained" onClick={handleSuccessSignUp}>
+            <Button
+              variant="contained"
+              onClick={handleSuccessSignUp}
+              sx={{ marginTop: "2rem" }}
+            >
               OK
             </Button>
           </Box>

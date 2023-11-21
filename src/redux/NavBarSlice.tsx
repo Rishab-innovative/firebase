@@ -7,18 +7,19 @@ interface NavBarState {
     firstName: string;
     lastName: string;
     email: string;
+    mobileNumber: string;
+    uid: string;
+    DocId: string;
     profilePhotoPath: string;
   } | null;
   status: string;
   logInStatus: boolean;
-  userUid: string | null;
 }
 
 const initialState: NavBarState = {
   userDetails: null,
   status: "idle",
   logInStatus: false,
-  userUid: "",
 };
 export const fetchUserDetails = createAsyncThunk(
   "fetchUserDetails",
@@ -29,7 +30,7 @@ export const fetchUserDetails = createAsyncThunk(
       userDoc.forEach((doc: any) => {
         const data = doc.data();
         if (data.uid === uid) {
-          userDetails = {...data, id: doc.id};
+          userDetails = { ...data, DocId: doc.id };
         }
       });
       return userDetails;
@@ -52,8 +53,6 @@ const navBarSlice = createSlice({
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
         state.userDetails = action.payload;
         state.status = "succeeded";
-        console.log("action-->", action.payload);
-        state.userUid = (action.payload as unknown as {uid: string}).uid;
       })
       .addCase(fetchUserDetails.rejected, (state) => {
         state.status = "failed";
@@ -62,4 +61,3 @@ const navBarSlice = createSlice({
 });
 
 export default navBarSlice.reducer;
-  
