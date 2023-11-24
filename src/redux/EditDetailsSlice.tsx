@@ -11,45 +11,35 @@ interface SaveEditedUserDataType {
   lastName: string;
   mobileNumber: string;
   DocId: string;
-}
-interface SaveEditedProfilePictureType {
   picture: File;
   uid: string;
-  DocId: string;
 }
+
 const initialState: NavBarState = {
   status: "idle",
 };
-export const SaveEditedUserData = createAsyncThunk(
-  "SaveEditedUserData",
+export const saveEditedUserData = createAsyncThunk(
+  "saveEditedUserData",
   async (data: SaveEditedUserDataType) => {
+    const storage = getStorage();
+    const storageRef = ref(storage, `files/${data.uid}/profilepicture`);
+
     try {
+      console.log(data);
       await updateDoc(doc(db, "userDetails", data.DocId), {
         firstName: data.firstName,
         lastName: data.lastName,
         mobileNumber: data.mobileNumber,
       });
-    } catch (error) {
-      console.error("Error Posting user details:", error);
-      throw error;
-    }
-  }
-);
-
-export const SaveEditedProfilePicture = createAsyncThunk(
-  "SaveEditedProfilePicture",
-  async (data: SaveEditedProfilePictureType) => {
-    const storage = getStorage();
-    try {
-      const storageRef = ref(storage, `userProfile/${data.uid}/profilepic`);
       await uploadBytes(storageRef, data.picture);
       const downloadURL = await getDownloadURL(storageRef);
-      updateDoc(doc(db, "userDetails", data.DocId), {
+      await updateDoc(doc(db, "userDetails", data.DocId), {
         profilePhotoPath: downloadURL,
       });
-      return downloadURL;
+
+      return { data, profilePictureURL: downloadURL };
     } catch (error) {
-      console.error("Error uploading profile photo:", error);
+      console.error("Error saving user data and profile photo:", error);
       throw error;
     }
   }
@@ -65,14 +55,17 @@ const EditUSerDetailSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(SaveEditedUserData.pending, (state) => {
+      .addCase(saveEditedUserData.pending, (state) => {
         state.status = "loading";
+        console.log("loadingg......");
       })
-      .addCase(SaveEditedUserData.fulfilled, (state) => {
+      .addCase(saveEditedUserData.fulfilled, (state) => {
         state.status = "succeeded";
+        console.log("FULFILLED......");
       })
-      .addCase(SaveEditedUserData.rejected, (state) => {
+      .addCase(saveEditedUserData.rejected, (state) => {
         state.status = "failed";
+        console.log("REJECTED......");
       });
   },
 });

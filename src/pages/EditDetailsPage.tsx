@@ -1,24 +1,23 @@
-import React, { useEffect } from "react";
-import TextField from "@mui/material/TextField";
-import { useState } from "react";
-import Input from "@mui/material/Input";
-import Button from "@mui/material/Button";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  Modal,
+  TextField,
+  Input,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatchType, RootState } from "../redux/Store";
 import { onAuthStateChanged } from "firebase/auth";
-import Modal from "@mui/material/Modal";
-import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
-
-import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
 import { fetchUserDetails } from "../redux/NavBarSlice";
 import { auth } from "../firebase";
-import {
-  SaveEditedUserData,
-  SaveEditedProfilePicture,
-  resetSuccess,
-} from "../redux/EditDetailsSlice";
+import { saveEditedUserData, resetSuccess } from "../redux/EditDetailsSlice";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import CustomModal from "../components/CustomModal";
 
 interface EditUserDataType {
   fname: string;
@@ -26,6 +25,11 @@ interface EditUserDataType {
   mobileNumber: string;
   picture: File | null;
 }
+const validationSchema = Yup.object({
+  fname: Yup.string().required("First Name is required"),
+  lname: Yup.string().required("Last Name is required"),
+  mobileNumber: Yup.string().required("Mobile Number is required"),
+});
 
 const style = {
   position: "absolute" as "absolute",
@@ -56,20 +60,6 @@ const EditDetailsPage: React.FC = () => {
   const [openCloseModal, setOpenCloseModal] = useState(true);
   const [error, setError] = useState(false);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const updatedRegisterData = {
-      ...updatedData,
-      [event.target.id]: event.target.value,
-    };
-    console.log(event.target.value);
-    if (event.target.value === "") {
-      setError(true);
-    } else {
-      // setUpdatedData(updatedRegisterData);
-      setError(false);
-    }
-    setUpdatedData(updatedRegisterData);
-  };
   const handleBlur = (event: any) => {
     if (event.target.value === "") {
       setError(true);
@@ -104,52 +94,66 @@ const EditDetailsPage: React.FC = () => {
   }, [LoggedInUserData.status]);
 
   const submitUpdatedData = async () => {
-    if (LoggedInUserData.userDetails && updatedData.picture && !error) {
-      dispatch(
-        SaveEditedUserData({
-          DocId: LoggedInUserData.userDetails.DocId,
-          firstName: updatedData.fname,
-          lastName: updatedData.lname,
-          mobileNumber: updatedData.mobileNumber,
-        })
-      );
-      dispatch(
-        SaveEditedProfilePicture({
-          uid: LoggedInUserData.userDetails.uid,
-          DocId: LoggedInUserData.userDetails.DocId,
-          picture: updatedData.picture,
-        })
-      );
-    } else {
-      setError(true);
-    }
+    console.log("hello");
+    formik.handleSubmit();
   };
-  const handleSuccessSignUp = () => {
+  const handleSuccessUpdateInfo = () => {
     navigate("/userProfile");
     dispatch(resetSuccess());
   };
+  const formik = useFormik({
+    initialValues: {
+      fname: LoggedInUserData.userDetails?.firstName,
+      lname: LoggedInUserData.userDetails?.lastName,
+      mobileNumber: LoggedInUserData.userDetails?.mobileNumber,
+      picture: null,
+    },
+    validationSchema,
+    onSubmit: async () => {
+      if (LoggedInUserData.userDetails && updatedData.picture && !error) {
+        dispatch(
+          saveEditedUserData({
+            DocId: LoggedInUserData.userDetails.DocId,
+            firstName: updatedData.fname,
+            lastName: updatedData.lname,
+            mobileNumber: updatedData.mobileNumber,
+            uid: LoggedInUserData.userDetails.uid,
+            picture: updatedData.picture,
+          })
+        );
+      } else {
+        setError(true);
+      }
+    },
+  });
   return (
     <>
       {updateDetailStatus.status === "succeeded" ? (
-        <Modal open={openCloseModal} onClose={() => setOpenCloseModal(false)}>
-          <Box sx={style}>
-            <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              className="mb-4"
-            >
-              Data Updated successfully
-            </Typography>
-            <Button
-              variant="contained"
-              onClick={handleSuccessSignUp}
-              sx={{ marginTop: "2rem" }}
-            >
-              OK
-            </Button>
-          </Box>
-        </Modal>
+        // <Modal open={openCloseModal} onClose={() => setOpenCloseModal(false)}>
+        //   <Box sx={style}>
+        //     <Typography
+        //       id="modal-modal-title"
+        //       variant="h6"
+        //       component="h2"
+        //       className="mb-4"
+        //     >
+        //       Data Updated successfully
+        //     </Typography>
+        //     <Button
+        //       variant="contained"
+        //       onClick={handleSuccessUpdateInfo}
+        //       sx={{ marginTop: "2rem" }}
+        //     >
+        //       OK
+        //     </Button>
+        //   </Box>
+        // </Modal>
+        <CustomModal
+          title="Data Updated successfully"
+          setOpenCloseModal={setOpenCloseModal}
+          openCloseModal={openCloseModal}
+          handleSuccessSignUp={handleSuccessUpdateInfo}
+        />
       ) : null}
       {LoggedInUserData.status === "succeeded" &&
       LoggedInUserData.userDetails ? (
@@ -158,24 +162,32 @@ const EditDetailsPage: React.FC = () => {
             <p className="text-3xl text-indigo-600">Update Details</p>
             <TextField
               id="fname"
-              value={updatedData.fname}
-              onChange={handleInputChange}
+              type="text"
+              value={formik.values.fname}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.fname && Boolean(formik.errors.fname)}
+              helperText={formik.touched.fname && formik.errors.fname}
               label="First Name"
               size="small"
-              onBlur={handleBlur}
             />
             <TextField
               id="lname"
-              value={updatedData.lname}
-              onChange={handleInputChange}
+              type="text"
+              value={formik.values.lname}
+              onChange={formik.handleChange}
+              helperText={formik.touched.fname && formik.errors.lname}
               label="Last Name"
               size="small"
-              onBlur={handleBlur}
+              onBlur={formik.handleBlur}
+              error={formik.touched.fname && Boolean(formik.errors.lname)}
             />
             <TextField
               id="mobileNumber"
-              value={updatedData.mobileNumber}
-              onChange={handleInputChange}
+              type="number"
+              value={formik.values.mobileNumber}
+              helperText={formik.touched.mobileNumber && formik.errors.lname}
+              onChange={formik.handleChange}
               label="mobile Number"
               size="small"
               onBlur={handleBlur}

@@ -1,24 +1,23 @@
-import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
-import Button from "@mui/material/Button";
+import {
+  styled,
+  InputLabel,
+  CircularProgress,
+  Button,
+  TextField,
+  IconButton,
+  Box,
+  OutlinedInput,
+  FormControl,
+  FormHelperText,
+  InputAdornment,
+} from "@mui/material";
 import { AppDispatchType, RootState } from "../redux/Store";
-import React from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
-import { useState } from "react";
-import InputLabel from "@mui/material/InputLabel";
-import { styled } from "@mui/material/styles";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
-import InputAdornment from "@mui/material/InputAdornment";
+import React, { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useNavigate } from "react-router-dom";
 import signUpSchema from "../schema";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
 import { useFormik } from "formik";
 import {
   RegistrationFormData,
@@ -26,6 +25,7 @@ import {
   resetSuccess,
 } from "../redux/RegisterSlice";
 import { useDispatch, useSelector } from "react-redux";
+import CustomModal from "../components/CustomModal";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -38,17 +38,6 @@ const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
 
 interface registerDataType {
   fname: string;
@@ -118,25 +107,17 @@ const SignupPage: React.FC = () => {
     navigate("/userProfile");
     dispatch(resetSuccess());
   };
-
+  console.log(registerStatus);
   return (
     <div className="flex justify-center items-center h-screen ">
       {registerStatus.isSuccess === true &&
       registerStatus.saveUserDataFulfil === true ? (
-        <Modal open={openCloseModal} onClose={() => setOpenCloseModal(false)}>
-          <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              SignUp successfully
-            </Typography>
-            <Button
-              variant="contained"
-              onClick={handleSuccessSignUp}
-              sx={{ marginTop: "2rem" }}
-            >
-              OK
-            </Button>
-          </Box>
-        </Modal>
+        <CustomModal
+          title="SignUp successfully"
+          setOpenCloseModal={setOpenCloseModal}
+          openCloseModal={openCloseModal}
+          handleSuccessSignUp={handleSuccessSignUp}
+        />
       ) : null}
       <form onSubmit={formik.handleSubmit}>
         <FormControl sx={{ m: 1, width: "45ch" }} variant="outlined">
