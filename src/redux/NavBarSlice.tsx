@@ -30,6 +30,7 @@ export const fetchUserDetails = createAsyncThunk(
       userDoc.forEach((doc: any) => {
         const data = doc.data();
         if (data.uid === uid) {
+          console.log("fetch slice");
           userDetails = { ...data, DocId: doc.id };
         }
       });

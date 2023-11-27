@@ -69,29 +69,21 @@ const EditDetailsPage: React.FC = () => {
     onAuthStateChanged(auth, async (user) => {
       user && dispatch(fetchUserDetails(user.uid));
     });
+    console.log("->", LoggedInUserData);
     if (
       LoggedInUserData.status === "succeeded" &&
       LoggedInUserData.userDetails
     ) {
+      console.log("logg");
       setUpdatedData({
         ...updatedData,
         fname: LoggedInUserData.userDetails.firstName,
         lname: LoggedInUserData.userDetails.lastName,
         mobileNumber: LoggedInUserData.userDetails.mobileNumber,
       });
-    } else {
     }
+    console.log("insnide useEFFEct");
   }, []);
-  useEffect(() => {
-    if (LoggedInUserData.userDetails) {
-      setUpdatedData({
-        ...updatedData,
-        fname: LoggedInUserData.userDetails.firstName,
-        lname: LoggedInUserData.userDetails.lastName,
-        mobileNumber: LoggedInUserData.userDetails.mobileNumber,
-      });
-    }
-  }, [LoggedInUserData.status]);
 
   const submitUpdatedData = async () => {
     console.log("hello");
@@ -126,28 +118,17 @@ const EditDetailsPage: React.FC = () => {
       }
     },
   });
+  const handleInputChange = (e: any) => {
+    const { id, value } = e.target;
+    setUpdatedData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+    formik.handleChange(e);
+  };
   return (
     <>
       {updateDetailStatus.status === "succeeded" ? (
-        // <Modal open={openCloseModal} onClose={() => setOpenCloseModal(false)}>
-        //   <Box sx={style}>
-        //     <Typography
-        //       id="modal-modal-title"
-        //       variant="h6"
-        //       component="h2"
-        //       className="mb-4"
-        //     >
-        //       Data Updated successfully
-        //     </Typography>
-        //     <Button
-        //       variant="contained"
-        //       onClick={handleSuccessUpdateInfo}
-        //       sx={{ marginTop: "2rem" }}
-        //     >
-        //       OK
-        //     </Button>
-        //   </Box>
-        // </Modal>
         <CustomModal
           title="Data Updated successfully"
           setOpenCloseModal={setOpenCloseModal}
@@ -164,7 +145,7 @@ const EditDetailsPage: React.FC = () => {
               id="fname"
               type="text"
               value={formik.values.fname}
-              onChange={formik.handleChange}
+              onChange={handleInputChange}
               onBlur={formik.handleBlur}
               error={formik.touched.fname && Boolean(formik.errors.fname)}
               helperText={formik.touched.fname && formik.errors.fname}
@@ -175,7 +156,7 @@ const EditDetailsPage: React.FC = () => {
               id="lname"
               type="text"
               value={formik.values.lname}
-              onChange={formik.handleChange}
+              onChange={handleInputChange}
               helperText={formik.touched.fname && formik.errors.lname}
               label="Last Name"
               size="small"
@@ -187,7 +168,7 @@ const EditDetailsPage: React.FC = () => {
               type="number"
               value={formik.values.mobileNumber}
               helperText={formik.touched.mobileNumber && formik.errors.lname}
-              onChange={formik.handleChange}
+              onChange={handleInputChange}
               label="mobile Number"
               size="small"
               onBlur={handleBlur}
