@@ -43,8 +43,8 @@ const LoginPage = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState<loginDataType>({
-    email: "",
-    password: "",
+    email: "amrit@gmail.com",
+    password: "QWer@123"
   });
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const updatedRegisterData = {
@@ -108,6 +108,7 @@ const LoginPage = () => {
         <p className="text-3xl text-indigo-600">LOG IN</p>
         <TextField
           id="email"
+          value={loginData.email}
           onChange={handleInputChange}
           label="E-mail"
           size="small"
@@ -119,6 +120,7 @@ const LoginPage = () => {
           <OutlinedInput
             onChange={handleInputChange}
             id="password"
+            value={loginData.password}
             type={showPassword ? "text" : "password"}
             endAdornment={
               <InputAdornment position="end">

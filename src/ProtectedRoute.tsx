@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
@@ -10,6 +10,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   component: Component,
   isLoggedIn,
 }) => {
+  
   console.log("isloggedIn", isLoggedIn);
   return isLoggedIn ? <Component /> : <Navigate to="/" />;
 };
