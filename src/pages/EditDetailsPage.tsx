@@ -152,17 +152,8 @@ const EditDetailsPage: React.FC = () => {
             />
             <Input
               id="picture"
-              // value={formik.values.picture}
               onChange={formik.handleChange}
               type="file"
-              // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              //   if (e.target.files && e.target.files[0]) {
-              //     setUpdatedData({
-              //       ...updatedData,
-              //       picture: e.target.files[0] as File,
-              //     });
-              //   }
-              // }}
               inputProps={{ accept: "image/*" }}
             />
             {updateDetailStatus.status === "loading" ? (
