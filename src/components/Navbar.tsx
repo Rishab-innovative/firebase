@@ -24,7 +24,6 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
   const userData = useSelector((state: RootState) => state.navbarData);
-  // const [logInStatus, setLogInStatus] = useState(false);
 
   const dispatch = useDispatch<AppDispatchType>();
   const navigate = useNavigate();
@@ -73,6 +72,7 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
     navigate("/editDetail");
   };
   console.log(userData)
+  if(!logInStatus) return null;
   return (
     <>
       {userData.status === "succeeded" && userData.userDetails ? (
