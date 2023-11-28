@@ -25,10 +25,11 @@ interface EditUserDataType {
   mobileNumber: string;
   picture: File | null;
 }
-const validationSchema = Yup.object({
+const validationSchema = Yup.object().shape({
   fname: Yup.string().required("First Name is required"),
   lname: Yup.string().required("Last Name is required"),
   mobileNumber: Yup.string().required("Mobile Number is required"),
+  picture: Yup.mixed().required("Image required")
 });
 
 const style = {
@@ -50,82 +51,61 @@ const EditDetailsPage: React.FC = () => {
     (state: RootState) => state.editUserDetail
   );
   const dispatch = useDispatch<AppDispatchType>();
-  const [updatedData, setUpdatedData] = useState<EditUserDataType>({
-    fname: "",
-    lname: "",
-    mobileNumber: "",
-    picture: null,
-  });
-
+  
   const [openCloseModal, setOpenCloseModal] = useState(true);
-  const [error, setError] = useState(false);
 
-  const handleBlur = (event: any) => {
-    if (event.target.value === "") {
-      setError(true);
-    }
-  };
   useEffect(() => {
+    console.log("->", LoggedInUserData);
+    console.log("insnide useEFFEct", formik.values);
+    if(formik.values.fname) return;
     onAuthStateChanged(auth, async (user) => {
       user && dispatch(fetchUserDetails(user.uid));
+      if (
+        LoggedInUserData.status === "succeeded" &&
+        LoggedInUserData.userDetails
+      ) {
+        console.log("logg");
+        formik.setValues({
+          fname: LoggedInUserData.userDetails.firstName,
+          lname: LoggedInUserData.userDetails.lastName,
+          mobileNumber: LoggedInUserData.userDetails.mobileNumber,
+          picture: LoggedInUserData.userDetails.profilePhotoPath as any
+        });
+      }
     });
-    console.log("->", LoggedInUserData);
-    if (
-      LoggedInUserData.status === "succeeded" &&
-      LoggedInUserData.userDetails
-    ) {
-      console.log("logg");
-      setUpdatedData({
-        ...updatedData,
-        fname: LoggedInUserData.userDetails.firstName,
-        lname: LoggedInUserData.userDetails.lastName,
-        mobileNumber: LoggedInUserData.userDetails.mobileNumber,
-      });
-    }
-    console.log("insnide useEFFEct");
-  }, []);
+  }, [LoggedInUserData.status]);
 
   const submitUpdatedData = async () => {
     console.log("hello");
     formik.handleSubmit();
   };
-  const handleSuccessUpdateInfo = () => {
+  const handleSuccessUpdateInfo = async () => {
     navigate("/userProfile");
+    await dispatch(fetchUserDetails(LoggedInUserData.userDetails!.uid));
     dispatch(resetSuccess());
   };
   const formik = useFormik({
     initialValues: {
-      fname: LoggedInUserData.userDetails?.firstName,
-      lname: LoggedInUserData.userDetails?.lastName,
-      mobileNumber: LoggedInUserData.userDetails?.mobileNumber,
+      fname: "",
+      lname: "",
+      mobileNumber: "",
       picture: null,
     },
     validationSchema,
     onSubmit: async () => {
-      if (LoggedInUserData.userDetails && updatedData.picture && !error) {
+      console.log('ffff', formik.values)
         dispatch(
           saveEditedUserData({
-            DocId: LoggedInUserData.userDetails.DocId,
-            firstName: updatedData.fname,
-            lastName: updatedData.lname,
-            mobileNumber: updatedData.mobileNumber,
-            uid: LoggedInUserData.userDetails.uid,
-            picture: updatedData.picture,
+            DocId: LoggedInUserData.userDetails!.DocId,
+            firstName: formik.values.fname as string,
+            lastName: formik.values.lname as string,
+            mobileNumber: formik.values.mobileNumber as string,
+            uid: LoggedInUserData.userDetails!.uid,
+            picture: formik.values.picture as unknown as File,
           })
         );
-      } else {
-        setError(true);
-      }
     },
   });
-  const handleInputChange = (e: any) => {
-    const { id, value } = e.target;
-    setUpdatedData((prevData) => ({
-      ...prevData,
-      [id]: value,
-    }));
-    formik.handleChange(e);
-  };
   return (
     <>
       {updateDetailStatus.status === "succeeded" ? (
@@ -145,8 +125,7 @@ const EditDetailsPage: React.FC = () => {
               id="fname"
               type="text"
               value={formik.values.fname}
-              onChange={handleInputChange}
-              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
               error={formik.touched.fname && Boolean(formik.errors.fname)}
               helperText={formik.touched.fname && formik.errors.fname}
               label="First Name"
@@ -156,11 +135,10 @@ const EditDetailsPage: React.FC = () => {
               id="lname"
               type="text"
               value={formik.values.lname}
-              onChange={handleInputChange}
+              onChange={formik.handleChange}
               helperText={formik.touched.fname && formik.errors.lname}
               label="Last Name"
               size="small"
-              onBlur={formik.handleBlur}
               error={formik.touched.fname && Boolean(formik.errors.lname)}
             />
             <TextField
@@ -168,27 +146,25 @@ const EditDetailsPage: React.FC = () => {
               type="number"
               value={formik.values.mobileNumber}
               helperText={formik.touched.mobileNumber && formik.errors.lname}
-              onChange={handleInputChange}
+              onChange={formik.handleChange}
               label="mobile Number"
               size="small"
-              onBlur={handleBlur}
             />
             <Input
-              id="image"
+              id="picture"
+              // value={formik.values.picture}
+              onChange={formik.handleChange}
               type="file"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                if (e.target.files && e.target.files[0]) {
-                  setUpdatedData({
-                    ...updatedData,
-                    picture: e.target.files[0] as File,
-                  });
-                }
-              }}
+              // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              //   if (e.target.files && e.target.files[0]) {
+              //     setUpdatedData({
+              //       ...updatedData,
+              //       picture: e.target.files[0] as File,
+              //     });
+              //   }
+              // }}
               inputProps={{ accept: "image/*" }}
             />
-            {error ? (
-              <p className="text-red-500">Please Fill all input fields</p>
-            ) : null}
             {updateDetailStatus.status === "loading" ? (
               <Box sx={{ display: "flex", justifyContent: "center" }}>
                 <CircularProgress />
