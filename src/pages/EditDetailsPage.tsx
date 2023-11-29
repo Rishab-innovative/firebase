@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Modal,
-  TextField,
-  Input,
-  Button,
-  CircularProgress,
-} from "@mui/material";
+import { Box, TextField, Input, Button, CircularProgress } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatchType, RootState } from "../redux/Store";
 import { onAuthStateChanged } from "firebase/auth";
@@ -144,7 +136,13 @@ const EditDetailsPage: React.FC = () => {
                 <CircularProgress />
               </Box>
             ) : (
-              <Button variant="contained" onClick={submitUpdatedData}>
+              <Button
+                variant="contained"
+                onClick={submitUpdatedData}
+                disabled={
+                  !formik.isValid || !picturePath || formik.isSubmitting
+                }
+              >
                 Update Changes
               </Button>
             )}

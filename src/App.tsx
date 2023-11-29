@@ -18,14 +18,19 @@ import { AppDispatchType, RootState } from "./redux/Store";
 import { fetchUserDetails } from "./redux/NavBarSlice";
 import ProtectedRoute from "./ProtectedRoute";
 import { Box, CircularProgress } from "@mui/material";
+import { useSelector } from "react-redux";
 
 function App() {
   const dispatch = useDispatch<AppDispatchType>();
+  const SuccessSignUp = useSelector(
+    (state: RootState) => state.registerUser.saveUserDataFulfil
+  );
 
   const [logInStatus, setLogInStatus] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("inside app");
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setLogInStatus(true);
@@ -35,7 +40,7 @@ function App() {
       }
       setLoading(false);
     });
-  }, []);
+  }, [SuccessSignUp]);
 
   if (loading) {
     return (

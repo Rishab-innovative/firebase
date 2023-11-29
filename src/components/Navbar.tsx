@@ -12,11 +12,10 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { fetchUserDetails } from "../redux/NavBarSlice";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatchType, RootState } from "../redux/Store";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/Store";
 import { auth } from "../firebase";
 interface NavbarProps {
   logInStatus: boolean;
@@ -24,8 +23,6 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
   const userData = useSelector((state: RootState) => state.navbarData);
-
-  const dispatch = useDispatch<AppDispatchType>();
   const navigate = useNavigate();
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
