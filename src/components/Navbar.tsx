@@ -1,15 +1,16 @@
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import { useEffect } from "react";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
+import {
+  Button,
+  Avatar,
+  Container,
+  Menu,
+  Typography,
+  Toolbar,
+  IconButton,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { signOut } from "firebase/auth";
@@ -94,7 +95,12 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
                   }}
                 >
                   <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">New Post</Typography>
+                    <Typography
+                      onClick={() => navigate("/NewPost")}
+                      textAlign="center"
+                    >
+                      New Post
+                    </Typography>
                   </MenuItem>
                   <MenuItem onClick={handleCloseNavMenu}>
                     <Typography onClick={handleEditDetails} textAlign="center">
@@ -109,7 +115,12 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
                   sx={{ my: 2, color: "white", display: "flex" }}
                 >
                   <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">New Post</Typography>
+                    <Typography
+                      onClick={() => navigate("/NewPost")}
+                      textAlign="center"
+                    >
+                      New Post
+                    </Typography>
                   </MenuItem>
                   <MenuItem onClick={handleCloseNavMenu}>
                     <Typography onClick={handleEditDetails} textAlign="center">
