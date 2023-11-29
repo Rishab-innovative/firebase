@@ -11,7 +11,7 @@ interface SaveEditedUserDataType {
   lastName: string;
   mobileNumber: string;
   DocId: string;
-  picture: File;
+  picture?: File;
   uid: string;
 }
 
@@ -21,18 +21,25 @@ const initialState: NavBarState = {
 export const saveEditedUserData = createAsyncThunk(
   "saveEditedUserData",
   async (data: SaveEditedUserDataType) => {
+    console.log("data-->", data);
+
+    if (!data.picture) {
+      throw new Error("Profile picture is undefined");
+    }
+
     const storage = getStorage();
     const storageRef = ref(storage, `files/${data.uid}/profilepicture`);
 
     try {
-      console.log(data);
       await updateDoc(doc(db, "userDetails", data.DocId), {
         firstName: data.firstName,
         lastName: data.lastName,
         mobileNumber: data.mobileNumber,
       });
+
       await uploadBytes(storageRef, data.picture);
       const downloadURL = await getDownloadURL(storageRef);
+
       await updateDoc(doc(db, "userDetails", data.DocId), {
         profilePhotoPath: downloadURL,
       });
@@ -57,15 +64,12 @@ const EditUSerDetailSlice = createSlice({
     builder
       .addCase(saveEditedUserData.pending, (state) => {
         state.status = "loading";
-        console.log("loadingg......");
       })
       .addCase(saveEditedUserData.fulfilled, (state) => {
         state.status = "succeeded";
-        console.log("FULFILLED......");
       })
       .addCase(saveEditedUserData.rejected, (state) => {
         state.status = "failed";
-        console.log("REJECTED......");
       });
   },
 });

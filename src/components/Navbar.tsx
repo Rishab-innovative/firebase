@@ -47,17 +47,6 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
     setAnchorElUser(null);
   };
 
-  // useEffect(() => {
-  //   onAuthStateChanged(auth, async (user) => {
-  //     if (user) {
-  //       setLogInStatus(true);
-  //       dispatch(fetchUserDetails(user.uid));
-  //     } else {
-  //       setLogInStatus(false);
-  //     }
-  //   });
-  // }, []);
-
   const handleLogout = () => {
     try {
       signOut(auth).then(() => {
@@ -71,8 +60,7 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
   const handleEditDetails = () => {
     navigate("/editDetail");
   };
-  console.log(userData)
-  if(!logInStatus) return null;
+  if (!logInStatus) return null;
   return (
     <>
       {userData.status === "succeeded" && userData.userDetails ? (

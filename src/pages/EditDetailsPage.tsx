@@ -19,30 +19,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import CustomModal from "../components/CustomModal";
 
-interface EditUserDataType {
-  fname: string;
-  lname: string;
-  mobileNumber: string;
-  picture: File | null;
-}
 const validationSchema = Yup.object().shape({
   fname: Yup.string().required("First Name is required"),
   lname: Yup.string().required("Last Name is required"),
   mobileNumber: Yup.string().required("Mobile Number is required"),
-  picture: Yup.mixed().required("Image required")
+  picture: Yup.mixed().required("Image required"),
 });
-
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
 
 const EditDetailsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -51,32 +33,29 @@ const EditDetailsPage: React.FC = () => {
     (state: RootState) => state.editUserDetail
   );
   const dispatch = useDispatch<AppDispatchType>();
-  
+
   const [openCloseModal, setOpenCloseModal] = useState(true);
+  const [picturePath, setPicturePath] = useState<File>();
 
   useEffect(() => {
-    console.log("->", LoggedInUserData);
-    console.log("insnide useEFFEct", formik.values);
-    if(formik.values.fname) return;
+    if (formik.values.fname) return;
     onAuthStateChanged(auth, async (user) => {
       user && dispatch(fetchUserDetails(user.uid));
       if (
         LoggedInUserData.status === "succeeded" &&
         LoggedInUserData.userDetails
       ) {
-        console.log("logg");
         formik.setValues({
           fname: LoggedInUserData.userDetails.firstName,
           lname: LoggedInUserData.userDetails.lastName,
           mobileNumber: LoggedInUserData.userDetails.mobileNumber,
-          picture: LoggedInUserData.userDetails.profilePhotoPath as any
+          picture: LoggedInUserData.userDetails.profilePhotoPath as any,
         });
       }
     });
   }, [LoggedInUserData.status]);
 
   const submitUpdatedData = async () => {
-    console.log("hello");
     formik.handleSubmit();
   };
   const handleSuccessUpdateInfo = async () => {
@@ -93,17 +72,16 @@ const EditDetailsPage: React.FC = () => {
     },
     validationSchema,
     onSubmit: async () => {
-      console.log('ffff', formik.values)
-        dispatch(
-          saveEditedUserData({
-            DocId: LoggedInUserData.userDetails!.DocId,
-            firstName: formik.values.fname as string,
-            lastName: formik.values.lname as string,
-            mobileNumber: formik.values.mobileNumber as string,
-            uid: LoggedInUserData.userDetails!.uid,
-            picture: formik.values.picture as unknown as File,
-          })
-        );
+      dispatch(
+        saveEditedUserData({
+          DocId: LoggedInUserData.userDetails!.DocId,
+          firstName: formik.values.fname as string,
+          lastName: formik.values.lname as string,
+          mobileNumber: formik.values.mobileNumber as string,
+          uid: LoggedInUserData.userDetails!.uid,
+          picture: picturePath,
+        })
+      );
     },
   });
   return (
@@ -150,10 +128,15 @@ const EditDetailsPage: React.FC = () => {
               label="mobile Number"
               size="small"
             />
+
             <Input
-              id="picture"
-              onChange={formik.handleChange}
+              id="image"
               type="file"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (e.target.files && e.target.files[0]) {
+                  setPicturePath(e.target.files[0] as File);
+                }
+              }}
               inputProps={{ accept: "image/*" }}
             />
             {updateDetailStatus.status === "loading" ? (

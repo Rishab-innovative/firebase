@@ -43,8 +43,8 @@ const LoginPage = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState<loginDataType>({
-    email: "amrit@gmail.com",
-    password: "QWer@123"
+    email: "",
+    password: "",
   });
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const updatedRegisterData = {
