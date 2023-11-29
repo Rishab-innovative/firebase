@@ -6,7 +6,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { fetchUserDetails } from "../redux/NavBarSlice";
 import { auth } from "../firebase";
-import { saveEditedUserData, resetSuccess } from "../redux/EditDetailsSlice";
+import {
+  saveEditedUserData,
+  resetSuccess,
+} from "../redux/EditUserDetailsSlice";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import CustomModal from "../components/CustomModal";
@@ -18,7 +21,7 @@ const validationSchema = Yup.object().shape({
   picture: Yup.mixed().required("Image required"),
 });
 
-const EditDetailsPage: React.FC = () => {
+const EditUserDetailsPage: React.FC = () => {
   const navigate = useNavigate();
   const LoggedInUserData = useSelector((state: RootState) => state.navbarData);
   const updateDetailStatus = useSelector(
@@ -163,4 +166,4 @@ const EditDetailsPage: React.FC = () => {
   );
 };
 
-export default EditDetailsPage;
+export default EditUserDetailsPage;

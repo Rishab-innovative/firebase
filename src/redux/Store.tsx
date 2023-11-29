@@ -3,7 +3,7 @@ import { combineReducers } from "@reduxjs/toolkit";
 import RegisterUserSlice from "./RegisterSlice";
 import loginUserSlice from "./LoginSlice";
 import navBarSlice from "./NavBarSlice";
-import EditUSerDetailSlice from "./EditDetailsSlice";
+import EditUSerDetailSlice from "./EditUserDetailsSlice";
 
 const rootReducer = combineReducers({
   registerUser: RegisterUserSlice,

@@ -1,28 +1,28 @@
 import { useEffect, useState } from "react";
+import { Box, CircularProgress } from "@mui/material";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
-import "./App.css";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import UserProfilePage from "./pages/UserProfilePage";
-import EditDetailsPage from "./pages/EditDetailsPage";
-import Navbar from "./components/Navbar";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
+import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { AppDispatchType, RootState } from "./redux/Store";
 import { fetchUserDetails } from "./redux/NavBarSlice";
 import ProtectedRoute from "./ProtectedRoute";
-import { Box, CircularProgress } from "@mui/material";
-import { useSelector } from "react-redux";
+import SignupPage from "./pages/SignupPage";
+import UserProfilePage from "./pages/UserProfilePage";
+import EditUserDetailsPage from "./pages/EditUserDetailsPage";
+import Navbar from "./components/Navbar";
+import LoginPage from "./pages/LoginPage";
+import "./App.css";
 
 function App() {
   const dispatch = useDispatch<AppDispatchType>();
-  const SuccessSignUp = useSelector(
+  const successSignUp = useSelector(
     (state: RootState) => state.registerUser.saveUserDataFulfil
   );
 
@@ -30,7 +30,6 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("inside app");
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setLogInStatus(true);
@@ -40,7 +39,7 @@ function App() {
       }
       setLoading(false);
     });
-  }, [SuccessSignUp]);
+  }, [successSignUp]);
 
   if (loading) {
     return (
@@ -67,7 +66,7 @@ function App() {
           path="/editDetail"
           element={
             <ProtectedRoute
-              component={EditDetailsPage}
+              component={EditUserDetailsPage}
               isLoggedIn={logInStatus}
             />
           }
