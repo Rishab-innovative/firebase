@@ -12,18 +12,17 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { fetchUserDetails } from "../redux/NavBarSlice";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatchType, RootState } from "../redux/Store";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/Store";
 import { auth } from "../firebase";
+interface NavbarProps {
+  logInStatus: boolean;
+}
 
-const Navbar: React.FC = () => {
+const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
   const userData = useSelector((state: RootState) => state.navbarData);
-  const [logInStatus, setLogInStatus] = useState(false);
-
-  const dispatch = useDispatch<AppDispatchType>();
   const navigate = useNavigate();
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -32,6 +31,7 @@ const Navbar: React.FC = () => {
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -43,16 +43,6 @@ const Navbar: React.FC = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setLogInStatus(true);
-        dispatch(fetchUserDetails(user.uid));
-      } else {
-        setLogInStatus(false);
-      }
-    });
-  }, []);
 
   const handleLogout = () => {
     try {
@@ -63,6 +53,11 @@ const Navbar: React.FC = () => {
       console.log(error);
     }
   };
+
+  const handleEditDetails = () => {
+    navigate("/editDetail");
+  };
+  if (!logInStatus) return null;
   return (
     <>
       {userData.status === "succeeded" && userData.userDetails ? (
@@ -102,7 +97,9 @@ const Navbar: React.FC = () => {
                     <Typography textAlign="center">New Post</Typography>
                   </MenuItem>
                   <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">Edit Post</Typography>
+                    <Typography onClick={handleEditDetails} textAlign="center">
+                      Edit Details
+                    </Typography>
                   </MenuItem>
                 </Menu>
               </Box>
@@ -115,7 +112,9 @@ const Navbar: React.FC = () => {
                     <Typography textAlign="center">New Post</Typography>
                   </MenuItem>
                   <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">Edit Post</Typography>
+                    <Typography onClick={handleEditDetails} textAlign="center">
+                      Edit Details
+                    </Typography>
                   </MenuItem>
                 </Button>
               </Box>

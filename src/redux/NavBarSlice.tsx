@@ -7,6 +7,9 @@ interface NavBarState {
     firstName: string;
     lastName: string;
     email: string;
+    mobileNumber: string;
+    uid: string;
+    DocId: string;
     profilePhotoPath: string;
   } | null;
   status: string;
@@ -27,7 +30,7 @@ export const fetchUserDetails = createAsyncThunk(
       userDoc.forEach((doc: any) => {
         const data = doc.data();
         if (data.uid === uid) {
-          userDetails = data;
+          userDetails = { ...data, DocId: doc.id };
         }
       });
       return userDetails;

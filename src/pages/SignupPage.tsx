@@ -120,7 +120,7 @@ const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen ">
+    <div className="flex justify-center items-center h-screen">
       {registerStatus.isSuccess === true &&
       registerStatus.saveUserDataFulfil === true ? (
         <Modal open={openCloseModal} onClose={() => setOpenCloseModal(false)}>
@@ -254,7 +254,6 @@ const SignupPage: React.FC = () => {
                 {formik.touched.password && formik.errors.password?.toString()}
               </FormHelperText>
             </FormControl>
-
             <FormControl
               required
               variant="outlined"
@@ -365,3 +364,4 @@ const SignupPage: React.FC = () => {
 };
 
 export default SignupPage;
+  
