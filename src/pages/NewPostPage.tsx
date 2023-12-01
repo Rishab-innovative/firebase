@@ -15,6 +15,10 @@ interface newPostDataType {
 }
 export const NewPostPage = () => {
   const [openCloseModal, setOpenCloseModal] = useState(true);
+  const [inputFieldError, setInputFieldError] = useState({
+    title: false,
+    description: false,
+  });
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatchType>();
   const newPostStatus = useSelector((state: RootState) => state.newPostDetail);
@@ -54,6 +58,33 @@ export const NewPostPage = () => {
     navigate("/userProfile");
     dispatch(resetSuccess());
   };
+  const handleOnBlur = (event: any) => {
+    if (newPostData.title.trim() === "") {
+      setInputFieldError({
+        ...inputFieldError,
+        title: true,
+      });
+    } else {
+      setInputFieldError({
+        ...inputFieldError,
+        title: false,
+      });
+    }
+  };
+  const handleOnBlurDescription = () => {
+    if (newPostData.description.trim() === "") {
+      setInputFieldError({
+        ...inputFieldError,
+        description: true,
+      });
+    } else {
+      setInputFieldError({
+        ...inputFieldError,
+        description: false,
+      });
+    }
+  };
+
   return (
     <>
       {newPostStatus.status === "succeeded" ? (
@@ -73,7 +104,11 @@ export const NewPostPage = () => {
             onChange={handleInputChange}
             label="TITLE"
             size="medium"
+            onBlur={handleOnBlur}
           />
+          {inputFieldError.title === true ? (
+            <p className="text-red-500">Please Enter Title</p>
+          ) : null}
 
           <Input
             id="picture"
@@ -88,10 +123,12 @@ export const NewPostPage = () => {
             }}
             inputProps={{ accept: "image/*" }}
           />
+
           <CKEditor
             editor={ClassicEditor}
             id="description"
             data=""
+            onBlur={handleOnBlurDescription}
             onChange={(event, editor) => {
               const data = editor.getData();
               setNewPostData({
@@ -100,12 +137,23 @@ export const NewPostPage = () => {
               });
             }}
           />
+          {inputFieldError.description === true ? (
+            <p className="text-red-500">Please Enter description</p>
+          ) : null}
           {newPostStatus.status === "loading" ? (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <CircularProgress />
             </Box>
           ) : (
-            <Button variant="contained" onClick={handleSubmitNewPost}>
+            <Button
+              variant="contained"
+              disabled={
+                inputFieldError.title ||
+                inputFieldError.description ||
+                !newPostData.picture
+              }
+              onClick={handleSubmitNewPost}
+            >
               Add Post
             </Button>
           )}
