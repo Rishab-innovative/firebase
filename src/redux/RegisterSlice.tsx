@@ -1,10 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, imageDb } from "../firebase";
-import { getDownloadURL } from "firebase/storage";
-import { db } from "../firebase";
+import { auth, db, imageDb } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
-import { ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface RegistrationInputData {
   email: string;

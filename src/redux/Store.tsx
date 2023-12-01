@@ -4,12 +4,14 @@ import RegisterUserSlice from "./RegisterSlice";
 import loginUserSlice from "./LoginSlice";
 import navBarSlice from "./NavBarSlice";
 import EditUSerDetailSlice from "./EditUserDetailsSlice";
+import NewPostSlice from "./NewPostSlice";
 
 const rootReducer = combineReducers({
   registerUser: RegisterUserSlice,
   loginUser: loginUserSlice,
   navbarData: navBarSlice,
   editUserDetail: EditUSerDetailSlice,
+  newPostDetail: NewPostSlice,
 });
 export const store = configureStore({
   reducer: rootReducer,

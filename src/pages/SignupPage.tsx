@@ -1,24 +1,26 @@
-import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
-import Button from "@mui/material/Button";
 import { AppDispatchType, RootState } from "../redux/Store";
 import React from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
 import { useState } from "react";
-import InputLabel from "@mui/material/InputLabel";
-import { styled } from "@mui/material/styles";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
-import InputAdornment from "@mui/material/InputAdornment";
+import {
+  TextField,
+  InputLabel,
+  IconButton,
+  Button,
+  CircularProgress,
+  Box,
+  Modal,
+  Typography,
+  InputAdornment,
+  FormControl,
+  styled,
+  FormHelperText,
+  OutlinedInput,
+} from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useNavigate } from "react-router-dom";
 import signUpSchema from "../schema";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
 import { useFormik } from "formik";
 import {
   RegistrationFormData,
@@ -364,4 +366,3 @@ const SignupPage: React.FC = () => {
 };
 
 export default SignupPage;
-  
