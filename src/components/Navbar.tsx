@@ -114,16 +114,25 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
                   onClick={handleCloseNavMenu}
                   sx={{ my: 2, color: "white", display: "flex" }}
                 >
-                  <MenuItem onClick={handleCloseNavMenu}>
+                  <MenuItem
+                    sx={{ "&:hover": { backgroundColor: "transparent" } }}
+                  >
                     <Typography
+                      sx={{ "&:hover": { backgroundColor: "transparent" } }}
                       onClick={() => navigate("/NewPost")}
                       textAlign="center"
                     >
                       New Post
                     </Typography>
                   </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography onClick={handleEditDetails} textAlign="center">
+                  <MenuItem
+                    sx={{ "&:hover": { backgroundColor: "transparent" } }}
+                  >
+                    <Typography
+                      sx={{ "&:hover": { backgroundColor: "transparent" } }}
+                      onClick={handleEditDetails}
+                      textAlign="center"
+                    >
                       Edit Details
                     </Typography>
                   </MenuItem>

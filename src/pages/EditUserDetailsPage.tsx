@@ -91,7 +91,10 @@ const EditUserDetailsPage: React.FC = () => {
       ) : null}
       {LoggedInUserData.status === "succeeded" &&
       LoggedInUserData.userDetails ? (
-        <div className="flex justify-center items-center h-screen ">
+        <div
+          className="flex justify-center items-center"
+          style={{ height: "88vh" }}
+        >
           <div className="flex flex-col gap-y-4 border-solid border-2 border-black-500 p-8 rounded-lg text-center">
             <p className="text-3xl text-indigo-600">Update Details</p>
             <TextField
