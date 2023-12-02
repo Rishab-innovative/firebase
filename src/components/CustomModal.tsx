@@ -19,7 +19,6 @@ const CustomModal: React.FC<{
   openCloseModal: boolean;
   handleSuccessSignUp: any;
 }> = ({ title, setOpenCloseModal, openCloseModal, handleSuccessSignUp }) => {
-  console.log("inside custom mOdal");
   return (
     <>
       <Modal open={openCloseModal} onClose={() => setOpenCloseModal(false)}>

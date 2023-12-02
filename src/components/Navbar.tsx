@@ -1,15 +1,16 @@
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import { useEffect } from "react";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
+import {
+  Button,
+  Avatar,
+  Container,
+  Menu,
+  Typography,
+  Toolbar,
+  IconButton,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { signOut } from "firebase/auth";
@@ -36,14 +37,6 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
   const handleLogout = () => {
     try {
       signOut(auth).then(() => {
@@ -52,10 +45,6 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handleEditDetails = () => {
-    navigate("/editDetail");
   };
   if (!logInStatus) return null;
   return (
@@ -88,16 +77,24 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
                     horizontal: "left",
                   }}
                   open={Boolean(anchorElNav)}
-                  onClose={handleCloseNavMenu}
+                  onClose={() => setAnchorElNav(null)}
                   sx={{
                     display: { xs: "block", md: "none" },
                   }}
                 >
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">New Post</Typography>
+                  <MenuItem onClick={() => setAnchorElNav(null)}>
+                    <Typography
+                      onClick={() => navigate("/new-post")}
+                      textAlign="center"
+                    >
+                      New Post
+                    </Typography>
                   </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography onClick={handleEditDetails} textAlign="center">
+                  <MenuItem onClick={() => setAnchorElNav(null)}>
+                    <Typography
+                      onClick={() => navigate("/edit-detail")}
+                      textAlign="center"
+                    >
                       Edit Details
                     </Typography>
                   </MenuItem>
@@ -105,17 +102,28 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
               </Box>
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
                 <Button
-                  onClick={handleCloseNavMenu}
+                  onClick={() => setAnchorElNav(null)}
                   sx={{ my: 2, color: "white", display: "flex" }}
                 >
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">New Post</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <Typography onClick={handleEditDetails} textAlign="center">
-                      Edit Details
-                    </Typography>
-                  </MenuItem>
+                  <Typography
+                    sx={{ "&:hover": { backgroundColor: "transparent" } }}
+                    onClick={() => navigate("/new-post")}
+                    textAlign="center"
+                  >
+                    New Post
+                  </Typography>
+                </Button>
+                <Button
+                  onClick={() => setAnchorElNav(null)}
+                  sx={{ my: 2, color: "white", display: "flex" }}
+                >
+                  <Typography
+                    sx={{ "&:hover": { backgroundColor: "transparent" } }}
+                    onClick={() => navigate("/edit-detail")}
+                    textAlign="center"
+                  >
+                    Edit Details
+                  </Typography>
                 </Button>
               </Box>
 
@@ -153,9 +161,9 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
                     horizontal: "right",
                   }}
                   open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
+                  onClose={() => setAnchorElUser(null)}
                 >
-                  <MenuItem onClick={handleCloseUserMenu}>
+                  <MenuItem onClick={() => setAnchorElUser(null)}>
                     <Typography textAlign="center" onClick={handleLogout}>
                       Logout
                     </Typography>

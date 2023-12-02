@@ -21,8 +21,6 @@ const initialState: NavBarState = {
 export const saveEditedUserData = createAsyncThunk(
   "saveEditedUserData",
   async (data: SaveEditedUserDataType) => {
-    console.log("data-->", data);
-
     if (!data.picture) {
       throw new Error("Profile picture is undefined");
     }

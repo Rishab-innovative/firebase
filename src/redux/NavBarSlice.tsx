@@ -44,7 +44,11 @@ export const fetchUserDetails = createAsyncThunk(
 const navBarSlice = createSlice({
   name: "navBarSlice",
   initialState,
-  reducers: {},
+  reducers: {
+    resetSuccess: (state) => {
+      state.status = "idle";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserDetails.pending, (state) => {
@@ -59,5 +63,5 @@ const navBarSlice = createSlice({
       });
   },
 });
-
+export const { resetSuccess } = navBarSlice.actions;
 export default navBarSlice.reducer;
