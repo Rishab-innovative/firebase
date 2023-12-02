@@ -117,7 +117,7 @@ const SignupPage: React.FC = () => {
     },
   });
   const handleSuccessSignUp = () => {
-    navigate("/userProfile");
+    navigate("/user-profile");
     dispatch(resetSuccess());
   };
 

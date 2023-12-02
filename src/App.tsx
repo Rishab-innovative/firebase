@@ -56,15 +56,17 @@ function App() {
         <Route
           path="/signup"
           element={
-            logInStatus ? <Navigate to="/userProfile" /> : <SignupPage />
+            logInStatus ? <Navigate to="/user-profile" /> : <SignupPage />
           }
         />
         <Route
           path="/"
-          element={logInStatus ? <Navigate to="/userProfile" /> : <LoginPage />}
+          element={
+            logInStatus ? <Navigate to="/user-profile" /> : <LoginPage />
+          }
         />
         <Route
-          path="/editDetail"
+          path="/edit-detail"
           element={
             <ProtectedRoute
               component={EditUserDetailsPage}
@@ -73,7 +75,7 @@ function App() {
           }
         />
         <Route
-          path="/userProfile"
+          path="/user-profile"
           element={
             <ProtectedRoute
               component={UserProfilePage}
@@ -82,7 +84,7 @@ function App() {
           }
         />
         <Route
-          path="/NewPost"
+          path="/new-post"
           element={
             <ProtectedRoute component={NewPostPage} isLoggedIn={logInStatus} />
           }

@@ -1,13 +1,14 @@
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Button, Box, CircularProgress, Input, TextField } from "@mui/material";
-import { useState } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { AddNewPost } from "../redux/NewPostSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { resetSuccess } from "../redux/NewPostSlice";
 import { AppDispatchType, RootState } from "../redux/Store";
 import CustomModal from "../components/CustomModal";
-import { useNavigate } from "react-router-dom";
-import { resetSuccess } from "../redux/NavBarSlice";
+
 interface newPostDataType {
   title: string;
   picture: File | null;
@@ -23,7 +24,7 @@ export const NewPostPage = () => {
   const dispatch = useDispatch<AppDispatchType>();
   const newPostStatus = useSelector((state: RootState) => state.newPostDetail);
 
-  const LoggedInUserData = useSelector((state: RootState) => state.navbarData);
+  const UserData = useSelector((state: RootState) => state.navbarData);
 
   const [newPostData, setNewPostData] = useState<newPostDataType>({
     title: "",
@@ -46,55 +47,39 @@ export const NewPostPage = () => {
           title: newPostData.title,
           photo: newPostData.picture,
           description: newPostData.description,
-          firstName: LoggedInUserData.userDetails!.firstName,
-          lastName: LoggedInUserData.userDetails!.lastName,
-          updatedBy: LoggedInUserData.userDetails!.uid,
-          profilePhotoPath: LoggedInUserData.userDetails!.profilePhotoPath,
+          user: {
+            firstName: UserData.userDetails!.firstName,
+            lastName: UserData.userDetails!.lastName,
+            updatedBy: UserData.userDetails!.uid,
+            profilePhotoPath: UserData.userDetails!.profilePhotoPath,
+          },
         })
       );
     }
   };
-  const handleSuccessUpdateInfo = async () => {
-    navigate("/userProfile");
+  const handleSuccessAddPost = async () => {
+    navigate("/user-profile");
     dispatch(resetSuccess());
   };
-  const handleOnBlur = (event: any) => {
-    if (newPostData.title.trim() === "") {
-      setInputFieldError({
-        ...inputFieldError,
-        title: true,
-      });
-    } else {
-      setInputFieldError({
-        ...inputFieldError,
-        title: false,
-      });
+  const handleOnBlur = (fieldName: string) => {
+    const fieldValue = (newPostData as any)[fieldName].trim();
+    const updatedErrors = { ...inputFieldError };
+    if (fieldName === "title" || fieldName === "description") {
+      updatedErrors[fieldName] = fieldValue === "";
     }
-  };
-  const handleOnBlurDescription = () => {
-    if (newPostData.description.trim() === "") {
-      setInputFieldError({
-        ...inputFieldError,
-        description: true,
-      });
-    } else {
-      setInputFieldError({
-        ...inputFieldError,
-        description: false,
-      });
-    }
+    setInputFieldError(updatedErrors);
   };
 
   return (
     <>
-      {newPostStatus.status === "succeeded" ? (
+      {newPostStatus.status === "succeeded" && (
         <CustomModal
           title="Post Added successfully"
           setOpenCloseModal={setOpenCloseModal}
           openCloseModal={openCloseModal}
-          handleSuccessSignUp={handleSuccessUpdateInfo}
+          handleSuccessSignUp={handleSuccessAddPost}
         />
-      ) : null}
+      )}
       <div
         className="flex justify-center items-center"
         style={{ height: "88vh" }}
@@ -107,7 +92,7 @@ export const NewPostPage = () => {
             onChange={handleInputChange}
             label="TITLE"
             size="medium"
-            onBlur={handleOnBlur}
+            onBlur={() => handleOnBlur("title")}
           />
           {inputFieldError.title === true ? (
             <p className="text-red-500">Please Enter Title</p>
@@ -126,12 +111,11 @@ export const NewPostPage = () => {
             }}
             inputProps={{ accept: "image/*" }}
           />
-
           <CKEditor
             editor={ClassicEditor}
             id="description"
             data=""
-            onBlur={handleOnBlurDescription}
+            onBlur={() => handleOnBlur("description")}
             onChange={(event, editor) => {
               const data = editor.getData();
               setNewPostData({

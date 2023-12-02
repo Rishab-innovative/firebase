@@ -54,7 +54,7 @@ const EditUserDetailsPage: React.FC = () => {
     formik.handleSubmit();
   };
   const handleSuccessUpdateInfo = async () => {
-    navigate("/userProfile");
+    navigate("/user-profile");
     await dispatch(fetchUserDetails(LoggedInUserData.userDetails!.uid));
     dispatch(resetSuccess());
   };

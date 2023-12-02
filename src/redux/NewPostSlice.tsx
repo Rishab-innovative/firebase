@@ -8,10 +8,12 @@ interface AddNewPostType {
   title: string;
   photo: File;
   description: string;
-  firstName: string;
-  lastName: string;
-  updatedBy: string;
-  profilePhotoPath: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    updatedBy: string;
+    profilePhotoPath: string;
+  };
 }
 interface NewPostState {
   status: string;
@@ -29,7 +31,7 @@ export const AddNewPost = createAsyncThunk(
     const storage = getStorage();
     const storageRef = ref(
       storage,
-      `Posts/${data.updatedBy}/postphotos${timestamp}`
+      `Posts/${data.user.updatedBy}/postphotos${timestamp}`
     );
     await uploadBytes(storageRef, data.photo);
     const downloadURL = await getDownloadURL(storageRef);
@@ -39,11 +41,11 @@ export const AddNewPost = createAsyncThunk(
       slug: slug,
       createdAt: timestamp,
       updatedAt: timestamp,
-      updatedBy: data.updatedBy,
+      updatedBy: data.user.updatedBy,
       photo: downloadURL,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      profilePhotoPath: data.profilePhotoPath,
+      firstName: data.user.firstName,
+      lastName: data.user.lastName,
+      profilePhotoPath: data.user.profilePhotoPath,
     };
     try {
       await addDoc(collection(db, "Posts"), postData);
@@ -56,7 +58,11 @@ export const AddNewPost = createAsyncThunk(
 const NewPostSlice = createSlice({
   name: "NewPostSlice",
   initialState,
-  reducers: {},
+  reducers: {
+    resetSuccess: (state) => {
+      state.status = "idle";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(AddNewPost.pending, (state) => {
@@ -70,4 +76,5 @@ const NewPostSlice = createSlice({
       });
   },
 });
+export const { resetSuccess } = NewPostSlice.actions;
 export default NewPostSlice.reducer;
