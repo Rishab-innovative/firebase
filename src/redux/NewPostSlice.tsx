@@ -8,6 +8,8 @@ interface AddNewPostType {
   title: string;
   photo: File;
   description: string;
+  taggedUser: any;
+
   user: {
     firstName: string;
     lastName: string;
@@ -46,6 +48,7 @@ export const AddNewPost = createAsyncThunk(
       firstName: data.user.firstName,
       lastName: data.user.lastName,
       profilePhotoPath: data.user.profilePhotoPath,
+      taggedUser: data.taggedUser,
     };
     try {
       await addDoc(collection(db, "Posts"), postData);

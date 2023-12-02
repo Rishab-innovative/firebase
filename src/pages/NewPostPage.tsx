@@ -1,25 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Box, CircularProgress, Input, TextField } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  Box,
+  OutlinedInput,
+  CircularProgress,
+  InputLabel,
+  Input,
+  TextField,
+  Chip,
+  Stack,
+  MenuItem,
+} from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { AddNewPost } from "../redux/NewPostSlice";
-import { resetSuccess } from "../redux/NewPostSlice";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import ListItemText from "@mui/material/ListItemText";
+
+import { AddNewPost, resetSuccess } from "../redux/NewPostSlice";
 import { AppDispatchType, RootState } from "../redux/Store";
 import CustomModal from "../components/CustomModal";
+import { userStore } from "../redux/UserList";
 
 interface newPostDataType {
   title: string;
   picture: File | null;
   description: string;
 }
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
 export const NewPostPage = () => {
+  const [taggedUser, setTaggedUser] = useState<string[]>([]);
+  const [userList, setUserList] = useState<any[]>([]);
   const [openCloseModal, setOpenCloseModal] = useState(true);
   const [inputFieldError, setInputFieldError] = useState({
     title: false,
     description: false,
   });
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatchType>();
   const newPostStatus = useSelector((state: RootState) => state.newPostDetail);
@@ -31,6 +62,7 @@ export const NewPostPage = () => {
     picture: null,
     description: "",
   });
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!(event.target.value.trim() === "")) {
       const postData = {
@@ -40,6 +72,7 @@ export const NewPostPage = () => {
       setNewPostData(postData);
     }
   };
+
   const handleSubmitNewPost = () => {
     if (newPostData.picture) {
       dispatch(
@@ -47,6 +80,7 @@ export const NewPostPage = () => {
           title: newPostData.title,
           photo: newPostData.picture,
           description: newPostData.description,
+          taggedUser: taggedUser,
           user: {
             firstName: UserData.userDetails!.firstName,
             lastName: UserData.userDetails!.lastName,
@@ -57,10 +91,12 @@ export const NewPostPage = () => {
       );
     }
   };
+
   const handleSuccessAddPost = async () => {
     navigate("/user-profile");
     dispatch(resetSuccess());
   };
+
   const handleOnBlur = (fieldName: string) => {
     const fieldValue = (newPostData as any)[fieldName].trim();
     const updatedErrors = { ...inputFieldError };
@@ -68,6 +104,29 @@ export const NewPostPage = () => {
       updatedErrors[fieldName] = fieldValue === "";
     }
     setInputFieldError(updatedErrors);
+  };
+
+  const handleChange = (event: SelectChangeEvent<typeof taggedUser>) => {
+    const {
+      target: { value },
+    } = event;
+    setTaggedUser(typeof value === "string" ? value.split(",") : value);
+  };
+
+  const { getUsersList } = userStore();
+
+  const fetchUsersList = async () => {
+    let users = await getUsersList();
+    setUserList(users);
+  };
+
+  useEffect(() => {
+    fetchUsersList();
+  }, []);
+
+  const handleDelete = (deletedName: string) => {
+    const updatedTaggedUser = taggedUser.filter((name) => name !== deletedName);
+    setTaggedUser(updatedTaggedUser);
   };
 
   return (
@@ -111,6 +170,7 @@ export const NewPostPage = () => {
             }}
             inputProps={{ accept: "image/*" }}
           />
+
           <CKEditor
             editor={ClassicEditor}
             id="description"
@@ -127,6 +187,39 @@ export const NewPostPage = () => {
           {inputFieldError.description === true ? (
             <p className="text-red-500">Please Enter description</p>
           ) : null}
+
+          <Stack direction="row" spacing={1}>
+            {taggedUser.map((name: string) => (
+              <Chip
+                key={name}
+                label={name}
+                onDelete={() => handleDelete(name)}
+              />
+            ))}
+          </Stack>
+
+          <FormControl sx={{ m: 1, width: 300 }}>
+            <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+            <Select
+              labelId="demo-multiple-checkbox-label"
+              id="demo-multiple-checkbox"
+              multiple
+              value={taggedUser}
+              onChange={handleChange}
+              input={<OutlinedInput label="Tag" />}
+              renderValue={(selected) => selected.join(", ")}
+              MenuProps={MenuProps}
+            >
+              {userList.map((name: any) => (
+                <MenuItem key={name.firstName} value={name.firstName}>
+                  <Checkbox checked={taggedUser.indexOf(name.firstName) > -1} />
+                  {/* <Checkbox checked={personName.indexOf(name.firstName) > -1} */}
+                  <ListItemText primary={name.firstName} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           {newPostStatus.status === "loading" ? (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <CircularProgress />
