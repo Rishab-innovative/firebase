@@ -34,7 +34,7 @@ const EditUserDetailsPage: React.FC = () => {
 
   useEffect(() => {
     if (formik.values.fname) return;
-    onAuthStateChanged(auth, async (user) => {
+    onAuthStateChanged(auth, async () => {
       if (
         LoggedInUserData.status === "succeeded" &&
         LoggedInUserData.userDetails

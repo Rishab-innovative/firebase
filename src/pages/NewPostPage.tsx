@@ -19,7 +19,6 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ListItemText from "@mui/material/ListItemText";
-
 import { AddNewPost, resetSuccess } from "../redux/NewPostSlice";
 import { AppDispatchType, RootState } from "../redux/Store";
 import CustomModal from "../components/CustomModal";
@@ -213,7 +212,6 @@ export const NewPostPage = () => {
               {userList.map((name: any) => (
                 <MenuItem key={name.firstName} value={name.firstName}>
                   <Checkbox checked={taggedUser.indexOf(name.firstName) > -1} />
-                  {/* <Checkbox checked={personName.indexOf(name.firstName) > -1} */}
                   <ListItemText primary={name.firstName} />
                 </MenuItem>
               ))}
