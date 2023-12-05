@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllPosts } from "../redux/NewPostSlice";
 import { AppDispatchType, RootState } from "../redux/Store";
-import { Avatar } from "@mui/material";
+import { Avatar, Box, CircularProgress, Stack, Chip } from "@mui/material";
+import FaceIcon from "@mui/icons-material/Face";
 
 const UserProfilePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
@@ -35,6 +36,7 @@ const UserProfilePage: React.FC = () => {
       setShowMore(!showMore);
     }
   };
+
   return (
     <>
       {newPostStatus.getPostStatus === "succeeded" ? (
@@ -86,11 +88,21 @@ const UserProfilePage: React.FC = () => {
                   </a>
                 ) : null}
               </div>
+              <div className="tagged-user">
+                  {a.taggedUser &&
+                    a.taggedUser.map((user: any) => (
+                      <Stack direction="row" spacing={1} >
+                        <Chip icon={<FaceIcon />} label={user} />
+                      </Stack>
+                    ))}
+                </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="text-red-500">The Page is Loading</div>
+        <Box sx={{ display: "flex items-center", justifyContent: "center" }}>
+          <CircularProgress />
+        </Box>
       )}
     </>
   );

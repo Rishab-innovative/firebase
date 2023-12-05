@@ -72,7 +72,6 @@ export const getAllPosts = createAsyncThunk("getAllPosts", async () => {
   console.log("inside async");
   let posts = [];
   try {
-    // posts = [];
     const querySnapshot = await getDocs(
       query(collection(db, "Posts"), orderBy("createdAt", "desc"))
     );
@@ -115,7 +114,7 @@ const NewPostSlice = createSlice({
     builder.addCase(getAllPosts.fulfilled, (state, action) => {
       state.getPostStatus = "succeeded";
       state.allPostData = action.payload;
-      console.log(action);
+      console.log(action.payload);
     });
     builder.addCase(getAllPosts.rejected, (state) => {
       state.getPostStatus = "failed";
