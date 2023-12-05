@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllPosts } from "../redux/NewPostSlice";
 import { AppDispatchType, RootState } from "../redux/Store";
-import { Avatar, Box, CircularProgress, Stack, Chip } from "@mui/material";
+import { Avatar, Box, CircularProgress, Stack, Chip, Button } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 
+const POSTS_DISPLAY_COUNT = 5;
 const UserProfilePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
   const [postData, setPostData] = useState([]);
+  const [displayedPostData, setDisplayedPostData] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const newPostStatus = useSelector((state: RootState) => state.newPostDetail);
 
@@ -16,11 +18,15 @@ const UserProfilePage: React.FC = () => {
       const a = await dispatch(getAllPosts());
       if (a.payload) {
         setPostData(a.payload as []);
+        setDisplayedPostData((a.payload as []).slice(0, POSTS_DISPLAY_COUNT))
       }
     };
     getData();
   }, []);
 
+  const handleShowMore = () => {
+    setDisplayedPostData((currData) => ([...currData, ...postData.slice(currData.length, currData.length + POSTS_DISPLAY_COUNT)]))
+  }
   const splitDescription = (description: string, lines: number) => {
     const words = description.split(" ");
     if (words.length <= lines * 10) {
@@ -40,8 +46,9 @@ const UserProfilePage: React.FC = () => {
   return (
     <>
       {newPostStatus.getPostStatus === "succeeded" ? (
+        <div>
         <div className="p-8 grid grid-cols-2 gap-4">
-          {postData.map((a: any) => (
+          {displayedPostData.map((a: any) => (
             <div
               className="border-solid border-2 border-black-600 p-4"
               key={a.id}
@@ -97,8 +104,18 @@ const UserProfilePage: React.FC = () => {
                     ))}
                 </div>
             </div>
-          ))}
+          ))} 
         </div>
+        <div className="px-8 pb-8">
+        <Button
+        variant="contained"
+        onClick={handleShowMore}
+        disabled={displayedPostData.length === postData.length}
+        >
+        Show More
+        </Button> 
+    </div>
+    </div>
       ) : (
         <Box sx={{ display: "flex items-center", justifyContent: "center" }}>
           <CircularProgress />
