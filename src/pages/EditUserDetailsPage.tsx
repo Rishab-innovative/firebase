@@ -34,8 +34,7 @@ const EditUserDetailsPage: React.FC = () => {
 
   useEffect(() => {
     if (formik.values.fname) return;
-    onAuthStateChanged(auth, async (user) => {
-      user && dispatch(fetchUserDetails(user.uid));
+    onAuthStateChanged(auth, async () => {
       if (
         LoggedInUserData.status === "succeeded" &&
         LoggedInUserData.userDetails
@@ -54,7 +53,7 @@ const EditUserDetailsPage: React.FC = () => {
     formik.handleSubmit();
   };
   const handleSuccessUpdateInfo = async () => {
-    navigate("/user-profile");
+    navigate("/all-posts");
     await dispatch(fetchUserDetails(LoggedInUserData.userDetails!.uid));
     dispatch(resetSuccess());
   };

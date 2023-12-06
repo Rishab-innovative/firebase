@@ -1,4 +1,10 @@
-import { collection, addDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ref, getDownloadURL, getStorage, uploadBytes } from "firebase/storage";
@@ -8,6 +14,8 @@ interface AddNewPostType {
   title: string;
   photo: File;
   description: string;
+  taggedUser: any;
+
   user: {
     firstName: string;
     lastName: string;
@@ -17,9 +25,13 @@ interface AddNewPostType {
 }
 interface NewPostState {
   status: string;
+  getPostStatus: string;
+  allPostData: any;
 }
 const initialState: NewPostState = {
   status: "idle",
+  getPostStatus: "idle",
+  allPostData: [],
 };
 export const AddNewPost = createAsyncThunk(
   "AddNewPost",
@@ -46,6 +58,7 @@ export const AddNewPost = createAsyncThunk(
       firstName: data.user.firstName,
       lastName: data.user.lastName,
       profilePhotoPath: data.user.profilePhotoPath,
+      taggedUser: data.taggedUser,
     };
     try {
       await addDoc(collection(db, "Posts"), postData);
@@ -54,6 +67,27 @@ export const AddNewPost = createAsyncThunk(
     }
   }
 );
+
+export const getAllPosts = createAsyncThunk("getAllPosts", async () => {
+  console.log("inside async");
+  let posts = [];
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, "Posts"), orderBy("createdAt", "desc"))
+    );
+    if (!querySnapshot.empty) {
+      for (const doc of querySnapshot.docs) {
+        const post = { ...doc.data(), id: doc.id };
+        posts.push(post);
+      }
+      return posts;
+    } else {
+      console.error("not found ");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 const NewPostSlice = createSlice({
   name: "NewPostSlice",
@@ -74,6 +108,16 @@ const NewPostSlice = createSlice({
       .addCase(AddNewPost.rejected, (state) => {
         state.status = "failed";
       });
+    builder.addCase(getAllPosts.pending, (state) => {
+      state.getPostStatus = "loading";
+    });
+    builder.addCase(getAllPosts.fulfilled, (state, action) => {
+      state.getPostStatus = "succeeded";
+      state.allPostData = action.payload;
+    });
+    builder.addCase(getAllPosts.rejected, (state) => {
+      state.getPostStatus = "failed";
+    });
   },
 });
 export const { resetSuccess } = NewPostSlice.actions;

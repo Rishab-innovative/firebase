@@ -57,7 +57,7 @@ const LoginPage = () => {
   const handleLogin = async () => {
     const response = await dispatch(loginUser(loginData));
     if (response.payload) {
-      navigate("/user-profile");
+      navigate("/all-posts");
     }
   };
   const isLoginButtonDisabled = !loginData.email || !loginData.password;
@@ -95,7 +95,7 @@ const LoginPage = () => {
         );
       }
       if (response.user.uid) {
-        navigate("/user-profile");
+        navigate("/all-posts");
       }
     } catch (error) {
       console.error(error);

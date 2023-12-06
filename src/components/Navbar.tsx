@@ -10,6 +10,7 @@ import {
   Toolbar,
   IconButton,
 } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
 import MenuIcon from "@mui/icons-material/Menu";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
@@ -100,7 +101,24 @@ const Navbar: React.FC<NavbarProps> = ({ logInStatus }) => {
                   </MenuItem>
                 </Menu>
               </Box>
-              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  display: { xs: "none", md: "flex" },
+                }}
+              >
+                <Button
+                  onClick={() => setAnchorElNav(null)}
+                  sx={{ my: 2, color: "white", display: "flex" }}
+                >
+                  <Typography
+                    sx={{ "&:hover": { backgroundColor: "transparent" } }}
+                    onClick={() => navigate("/all-posts")}
+                    textAlign="center"
+                  >
+                    <HomeIcon />
+                  </Typography>
+                </Button>
                 <Button
                   onClick={() => setAnchorElNav(null)}
                   sx={{ my: 2, color: "white", display: "flex" }}

@@ -117,7 +117,7 @@ const SignupPage: React.FC = () => {
     },
   });
   const handleSuccessSignUp = () => {
-    navigate("/user-profile");
+    navigate("/all-posts");
     dispatch(resetSuccess());
   };
 

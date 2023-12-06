@@ -93,7 +93,6 @@ export const SaveUserData = createAsyncThunk(
     }
   }
 );
-
 const RegisterUserSlice = createSlice({
   name: "SignUpData",
   initialState,
