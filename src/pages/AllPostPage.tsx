@@ -13,7 +13,7 @@ import {
 import FaceIcon from "@mui/icons-material/Face";
 
 const POSTS_DISPLAY_COUNT = 5;
-const UserProfilePage: React.FC = () => {
+const AllPost: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
   const [postData, setPostData] = useState([]);
   const [displayedPostData, setDisplayedPostData] = useState([]);
@@ -101,7 +101,7 @@ const UserProfilePage: React.FC = () => {
                       }}
                       className="text-blue-500 cursor-pointer"
                     >
-                      Show More
+                      {showMore ? "show Less" : "show More"}
                     </a>
                   ) : null}
                 </div>
@@ -116,13 +116,13 @@ const UserProfilePage: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className="px-8 pb-8">
+          <div className="px-8 pb-8 flex justify-center">
             <Button
               variant="contained"
               onClick={handleShowMore}
               disabled={displayedPostData.length === postData.length}
             >
-              Show More
+              Show More Posts
             </Button>
           </div>
         </div>
@@ -135,4 +135,4 @@ const UserProfilePage: React.FC = () => {
   );
 };
 
-export default UserProfilePage;
+export default AllPost;

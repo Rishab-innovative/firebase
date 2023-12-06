@@ -92,7 +92,7 @@ export const NewPostPage = () => {
   };
 
   const handleSuccessAddPost = async () => {
-    navigate("/user-profile");
+    navigate("/all-posts");
     dispatch(resetSuccess());
   };
 

@@ -14,7 +14,7 @@ import { AppDispatchType, RootState } from "./redux/Store";
 import { fetchUserDetails } from "./redux/NavBarSlice";
 import ProtectedRoute from "./ProtectedRoute";
 import SignupPage from "./pages/SignupPage";
-import UserProfilePage from "./pages/UserProfilePage";
+import AllPost from "./pages/AllPostPage";
 import EditUserDetailsPage from "./pages/EditUserDetailsPage";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
@@ -75,12 +75,9 @@ function App() {
           }
         />
         <Route
-          path="/user-profile"
+          path="/all-posts"
           element={
-            <ProtectedRoute
-              component={UserProfilePage}
-              isLoggedIn={logInStatus}
-            />
+            <ProtectedRoute component={AllPost} isLoggedIn={logInStatus} />
           }
         />
         <Route
