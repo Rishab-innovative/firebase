@@ -142,7 +142,7 @@ export const NewPostPage = () => {
         className="flex justify-center items-center"
         style={{ height: "88vh" }}
       >
-        <div className="flex flex-col gap-y-4 border-solid border-2 border-black-500 p-8 rounded-lg text-center">
+        <div className="flex flex-col w-9/12 gap-y-4 border-solid border-2 border-black-500 p-8 rounded-lg text-center">
           <p className="text-3xl text-indigo-600">New Post</p>
           <TextField
             id="title"
@@ -169,20 +169,27 @@ export const NewPostPage = () => {
             }}
             inputProps={{ accept: "image/*" }}
           />
-
-          <CKEditor
-            editor={ClassicEditor}
-            id="description"
-            data=""
-            onBlur={() => handleOnBlur("description")}
-            onChange={(event, editor) => {
-              const data = editor.getData();
-              setNewPostData({
-                ...newPostData,
-                description: data,
-              });
+          <div
+            style={{
+              maxHeight: "150px",
+              overflow: "scroll",
             }}
-          />
+          >
+            <CKEditor
+              editor={ClassicEditor}
+              id="description"
+              data=""
+              onBlur={() => handleOnBlur("description")}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                setNewPostData({
+                  ...newPostData,
+                  description: data,
+                });
+              }}
+            />
+          </div>
+
           {inputFieldError.description === true ? (
             <p className="text-red-500">Please Enter description</p>
           ) : null}

@@ -55,15 +55,11 @@ function App() {
       <Routes>
         <Route
           path="/signup"
-          element={
-            logInStatus ? <Navigate to="/user-profile" /> : <SignupPage />
-          }
+          element={logInStatus ? <Navigate to="/all-posts" /> : <SignupPage />}
         />
         <Route
           path="/"
-          element={
-            logInStatus ? <Navigate to="/user-profile" /> : <LoginPage />
-          }
+          element={logInStatus ? <Navigate to="/all-posts" /> : <LoginPage />}
         />
         <Route
           path="/edit-detail"
