@@ -114,7 +114,6 @@ const NewPostSlice = createSlice({
     builder.addCase(getAllPosts.fulfilled, (state, action) => {
       state.getPostStatus = "succeeded";
       state.allPostData = action.payload;
-      console.log(action.payload);
     });
     builder.addCase(getAllPosts.rejected, (state) => {
       state.getPostStatus = "failed";
