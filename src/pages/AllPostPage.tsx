@@ -77,6 +77,7 @@ const AllPost: React.FC = () => {
 
   const showNotification = (title: string, body: string) => {
     if (Notification.permission === "granted") {
+      console.log("notification send");
       new Notification(title, { body });
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then((permission) => {
