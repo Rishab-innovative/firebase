@@ -18,14 +18,16 @@ import { addCommentOnPost, deleteComment } from "../redux/NewPostSlice";
 const POSTS_DISPLAY_COUNT = 5;
 const AllPost: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
+  const newPostStatus = useSelector((state: RootState) => state.newPostDetail);
   const [postData, setPostData] = useState([]);
   const userData = useSelector(
     (state: RootState) => state.navbarData.userDetails
   );
   const [displayedPostData, setDisplayedPostData] = useState([]);
+  const [postComments, setPostComments] = useState<{ [key: string]: string }>(
+    {}
+  );
   const [showMore, setShowMore] = useState(false);
-  const [comment, setComment] = useState("");
-  const newPostStatus = useSelector((state: RootState) => state.newPostDetail);
   const [comments, setComments] = useState<{
     [key: string]: { comment: string; updatedBy: string }[];
   }>({});
@@ -67,27 +69,44 @@ const AllPost: React.FC = () => {
       setShowMore(!showMore);
     }
   };
-  const addCommentsInPost = async (
-    postId: any,
-    fName: string,
+  const handlePostComment = (
+    postId: string,
+    firstName: string,
     updatedBy: string
   ) => {
-    if (!comment) return;
-    setComments((prevState) => ({
-      ...prevState,
-      ...{ [postId]: [{ updatedBy, comment }, ...prevState[postId]] },
+    const commentText = postComments[postId];
+
+    if (!commentText) return;
+
+    setComments((prevComments) => ({
+      ...prevComments,
+      ...{
+        [postId]: [
+          { updatedBy, comment: commentText },
+          ...prevComments[postId],
+        ],
+      },
     }));
+
     dispatch(
       addCommentOnPost({
-        comment: comment,
+        comment: commentText,
         postId: postId,
         updatedBy: updatedBy,
-        firstName: fName,
+        firstName: firstName,
       })
     );
+    setPostComments((prevComments) => ({
+      ...prevComments,
+      [postId]: "",
+    }));
   };
-  const handleCommentValue = (event: any) => {
-    setComment(event.target.value);
+
+  const handleCommentValue = (postId: string, event: any) => {
+    setPostComments((prevComments) => ({
+      ...prevComments,
+      [postId]: event.target.value,
+    }));
   };
 
   const handleDelete = async (commentId: string, postId: string) => {
@@ -164,7 +183,7 @@ const AllPost: React.FC = () => {
                   {comments[post.id].map((commentObj: any) => (
                     <div key={commentObj.comment}>
                       <span className="text-gray-500">
-                        {commentObj.comment}
+                        {`- ${commentObj.comment}`}
                         {userData!.uid === post.updatedBy && (
                           <DeleteIcon
                             onClick={() => handleDelete(commentObj.id, post.id)}
@@ -177,16 +196,17 @@ const AllPost: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-4 py-2">
                   <TextField
-                    id="comment"
+                    id={`comment-${post.id}`}
                     type="text"
-                    onChange={handleCommentValue}
+                    onChange={(event) => handleCommentValue(post.id, event)}
+                    value={postComments[post.id] || ""}
                     label="Add a comment"
                     size="small"
                   />
                   <Button
                     variant="contained"
                     onClick={() =>
-                      addCommentsInPost(post.id, post.firstName, post.updatedBy)
+                      handlePostComment(post.id, post.firstName, post.updatedBy)
                     }
                   >
                     Post comment
