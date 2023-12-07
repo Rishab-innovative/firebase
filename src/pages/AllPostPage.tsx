@@ -74,6 +74,18 @@ const AllPost: React.FC = () => {
       setShowMore(!showMore);
     }
   };
+
+  const showNotification = (title: string, body: string) => {
+    if (Notification.permission === "granted") {
+      new Notification(title, { body });
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          new Notification(title, { body });
+        }
+      });
+    }
+  };
   const handlePostComment = (
     postId: string,
     firstName: string,
@@ -101,6 +113,7 @@ const AllPost: React.FC = () => {
         firstName: firstName,
       })
     );
+    showNotification(`${userData!.firstName}`, `commented on a post`);
     setPostComments((prevComments) => ({
       ...prevComments,
       [postId]: "",

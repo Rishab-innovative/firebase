@@ -1,4 +1,4 @@
-import { Avatar, Chip, Stack } from "@mui/material";
+import { Avatar, Box, Chip, CircularProgress, Stack } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import { fetchSinglePost, getCommentsForPost } from "../redux/SinglePostSlice";
 import { AppDispatchType, RootState } from "../redux/Store";
@@ -21,7 +21,6 @@ const SinglePost: React.FC = () => {
     description: "",
     taggedUser: [],
   });
-  const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
     const getPostData = async () => {
@@ -51,14 +50,6 @@ const SinglePost: React.FC = () => {
     };
     getPostData();
   }, []);
-
-  const splitDescription = (description: string, lines: number) => {
-    const words = description.split(" ");
-    if (words.length <= lines * 10) {
-      return description;
-    }
-    return words.slice(0, lines * 10).join(" ") + "...";
-  };
   return (
     <>
       {singlePostDataStatus.status === "succeeded" && singlePostData ? (
@@ -76,36 +67,14 @@ const SinglePost: React.FC = () => {
               />
             </div>
             <div className="font-bold my-2 text-2xl">
-              {singlePostData.title}
+              {`• ${singlePostData.title}`}
             </div>
-            <div>
-              {!showMore ? (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: splitDescription(singlePostData.description, 2),
-                  }}
-                />
-              ) : (
-                <div
-                  style={{
-                    maxHeight: "150px",
-                    overflowY: "auto",
-                  }}
-                  className="border border-gray-300 p-4"
-                  dangerouslySetInnerHTML={{
-                    __html: splitDescription(singlePostData.description, 100),
-                  }}
-                />
-              )}
-              {singlePostData.description.length > 170 ? (
-                <a
-                  onClick={() => setShowMore(!showMore)}
-                  className="text-blue-500 cursor-pointer"
-                >
-                  {showMore ? "show Less" : "show More"}
-                </a>
-              ) : null}
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: singlePostData.description,
+              }}
+            ></div>
+
             <div className="flex gap-4 my-2">
               {singlePostData.taggedUser &&
                 singlePostData.taggedUser.map((user: any) => (
@@ -124,7 +93,9 @@ const SinglePost: React.FC = () => {
           </div>
         </div>
       ) : (
-        <p>page is loading</p>
+        <Box sx={{ display: "flex items-center", justifyContent: "center" }}>
+          <CircularProgress />
+        </Box>
       )}
     </>
   );
