@@ -19,6 +19,7 @@ import EditUserDetailsPage from "./pages/EditUserDetailsPage";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import { NewPostPage } from "./pages/NewPostPage";
+import SinglePost from "./pages/SinglePostPage";
 import "./App.css";
 
 function App() {
@@ -80,6 +81,12 @@ function App() {
           path="/new-post"
           element={
             <ProtectedRoute component={NewPostPage} isLoggedIn={logInStatus} />
+          }
+        />
+        <Route
+          path="/post/:id"
+          element={
+            <ProtectedRoute component={SinglePost} isLoggedIn={logInStatus} />
           }
         />
       </Routes>

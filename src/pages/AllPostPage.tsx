@@ -12,12 +12,15 @@ import {
   Button,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import FaceIcon from "@mui/icons-material/Face";
 import { addCommentOnPost, deleteComment } from "../redux/NewPostSlice";
 
 const POSTS_DISPLAY_COUNT = 5;
 const AllPost: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
+  const navigate = useNavigate();
   const newPostStatus = useSelector((state: RootState) => state.newPostDetail);
   const [postData, setPostData] = useState([]);
   const userData = useSelector(
@@ -31,6 +34,7 @@ const AllPost: React.FC = () => {
   const [comments, setComments] = useState<{
     [key: string]: { comment: string; updatedBy: string }[];
   }>({});
+
   useEffect(() => {
     const getData = async () => {
       const response = await dispatch(getAllPosts());
@@ -64,9 +68,22 @@ const AllPost: React.FC = () => {
     return words.slice(0, lines * 10).join(" ") + "...";
   };
   const toggleShowMore = (postId: string) => {
+    console.log("postData->", postData);
     const post = postData.find((p: any) => p.id === postId);
     if (post) {
       setShowMore(!showMore);
+    }
+  };
+
+  const showNotification = (title: string, body: string) => {
+    if (Notification.permission === "granted") {
+      new Notification(title, { body });
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          new Notification(title, { body });
+        }
+      });
     }
   };
   const handlePostComment = (
@@ -96,6 +113,7 @@ const AllPost: React.FC = () => {
         firstName: firstName,
       })
     );
+    showNotification(`${userData!.firstName}`, `commented on a post`);
     setPostComments((prevComments) => ({
       ...prevComments,
       [postId]: "",
@@ -119,6 +137,11 @@ const AllPost: React.FC = () => {
     }));
   };
 
+  const showSinglePost = (postId: string) => {
+    console.log("inside single func");
+    navigate(`/post/${postId}`);
+  };
+
   return (
     <>
       {newPostStatus.getPostStatus === "succeeded" ? (
@@ -129,9 +152,17 @@ const AllPost: React.FC = () => {
                 className="border-solid border-2 border-black-600 p-4"
                 key={post.id}
               >
-                <div className="flex items-center gap-x-2 my-3.5 font-medium">
-                  <Avatar alt="Remy Sharp" src={post.profilePhotoPath} />
-                  {`${post.firstName} ${post.lastName}`}
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-x-2 my-3.5 font-medium">
+                    <Avatar alt="Remy Sharp" src={post.profilePhotoPath} />
+                    {`${post.firstName} ${post.lastName}`}
+                  </div>
+                  <div className="mr-6 text-2xl">
+                    <ArrowOutwardIcon
+                      onClick={() => showSinglePost(post.id)}
+                      sx={{ fontSize: "2rem", cursor: "pointer" }}
+                    />
+                  </div>
                 </div>
                 <div className=" w-full h-80 m-auto">
                   <img
