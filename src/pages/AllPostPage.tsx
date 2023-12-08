@@ -54,6 +54,7 @@ const AllPost: React.FC = () => {
     };
     getData();
   }, []);
+
   const handleShowMore = () => {
     setDisplayedPostData((currData) => [
       ...currData,
@@ -68,7 +69,6 @@ const AllPost: React.FC = () => {
     return words.slice(0, lines * 10).join(" ") + "...";
   };
   const toggleShowMore = (postId: string) => {
-    console.log("postData->", postData);
     const post = postData.find((p: any) => p.id === postId);
     if (post) {
       setShowMore(!showMore);
@@ -76,9 +76,13 @@ const AllPost: React.FC = () => {
   };
 
   const showNotification = (title: string, body: string) => {
+    const options = {
+      body,
+      icon: "notification.png",
+      image: "fimage.png",
+    };
     if (Notification.permission === "granted") {
-      console.log("notification send");
-      new Notification(title, { body });
+      new Notification(title, options);
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
@@ -139,10 +143,8 @@ const AllPost: React.FC = () => {
   };
 
   const showSinglePost = (postId: string) => {
-    console.log("inside single func");
     navigate(`/post/${postId}`);
   };
-
   return (
     <>
       {newPostStatus.getPostStatus === "succeeded" ? (
@@ -213,7 +215,7 @@ const AllPost: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-1">
                   {comments[post.id].map((commentObj: any) => (
-                    <div key={commentObj.comment}>
+                    <div key={commentObj.id}>
                       <span className="text-gray-500">
                         {`- ${commentObj.comment}`}
                         {userData!.uid === post.updatedBy && (
